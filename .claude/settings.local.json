@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -c \"C:\\\\Users\\\\ladhu\\\\OneDrive\\\\Documents\\\\PastPaperTracker\\\\js\\\\export-utils.js\")",
+      "Bash(node -c \"C:\\\\Users\\\\ladhu\\\\OneDrive\\\\Documents\\\\PastPaperTracker\\\\js\\\\comparison-utils.js\")"
+    ]
+  }
+}

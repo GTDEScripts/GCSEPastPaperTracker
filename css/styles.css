@@ -943,6 +943,138 @@
             }
         }
 
+        /* Trends & Analysis Styles */
+        .stat-item {
+            background: var(--bg-secondary);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-item span {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        .stat-item strong {
+            color: var(--accent-dark);
+            font-size: 1.2em;
+        }
+
+        .trend-card {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-primary));
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .trend-card h4 {
+            margin: 0 0 10px 0;
+            color: var(--accent-dark);
+        }
+
+        .trend-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+        }
+
+        .trend-direction {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .trend-direction.improving { color: #10b981; }
+        .trend-direction.declining { color: #ef4444; }
+        .trend-direction.stable { color: #f59e0b; }
+
+        #problemPapersContainer table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #problemPapersContainer th {
+            background: var(--bg-primary);
+            color: var(--accent-dark);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        #problemPapersContainer td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        #problemPapersContainer tr:hover {
+            background: var(--bg-primary);
+        }
+
+        .problem-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #ef4444;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        /* Import/Export Modal Styles */
+        .modal-section {
+            margin-bottom: 20px;
+        }
+
+        .modal-section h3 {
+            color: var(--accent-dark);
+            font-size: 1.1em;
+            margin-bottom: 12px;
+        }
+
+        #importFile {
+            padding: 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95em;
+            cursor: pointer;
+        }
+
+        #conflictResolution {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 5px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.9em;
+        }
+
+        .import-export-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .import-export-tabs .tab-btn {
+            padding: 10px 15px;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.9em;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.3s ease;
+        }
+
+        .import-export-tabs .tab-btn.active {
+            color: var(--accent-dark);
+            border-bottom-color: var(--accent);
+        }
+
         @media print {
             body, .container {
                 background: white;

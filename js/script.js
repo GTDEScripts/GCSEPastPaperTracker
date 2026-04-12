@@ -721,6 +721,93 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 html += '</table>';
                 weakAreasContainer.innerHTML = html;
             }
+            // Render Subject Trends
+            renderSubjectTrends();
+
+            // Render Problem Papers
+            renderProblemPapers();
+        }
+
+        // Render subject trends section
+        function renderSubjectTrends() {
+            const container = document.getElementById('subjectTrendsContainer');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            subjects.forEach(subject => {
+                const trendAnalysis = getSubjectTrendAnalysis(subject);
+                const trends = trendAnalysis.trends;
+
+                if (trends.length === 0) return;
+
+                const card = document.createElement('div');
+                card.className = 'trend-card';
+
+                const firstPercent = trends[0].percentage;
+                const lastPercent = trends[trends.length - 1].percentage;
+                const change = lastPercent - firstPercent;
+
+                let directionClass = 'stable';
+                if (change > 5) directionClass = 'improving';
+                else if (change < -5) directionClass = 'declining';
+
+                card.innerHTML = `
+                    <h4>${subject}</h4>
+                    <div style="font-size: 1.1em; margin-bottom: 8px;">
+                        <span class="trend-direction ${directionClass}">${trendAnalysis.direction}</span>
+                        <span style="margin-left: 8px; color: var(--text-secondary);">
+                            ${firstPercent}% → ${lastPercent}%
+                        </span>
+                    </div>
+                    <div style="font-size: 0.85em; color: var(--text-secondary);">
+                        ${trendAnalysis.status}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // Render problem papers section
+        function renderProblemPapers() {
+            const container = document.getElementById('problemPapersContainer');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            const allProblems = [];
+
+            subjects.forEach(subject => {
+                const problems = findProblemPapers(subject, 70);
+                problems.forEach(problem => {
+                    allProblems.push({ subject, ...problem });
+                });
+            });
+
+            if (allProblems.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary);">No problem papers identified. Great job! 🎉</p>';
+                return;
+            }
+
+            // Sort by low score count
+            allProblems.sort((a, b) => b.lowScoreCount - a.lowScoreCount);
+
+            let html = '<table><thead><tr><th>Subject</th><th>Paper</th><th>Avg Score</th><th>Low Scores</th><th>Range</th></tr></thead><tbody>';
+
+            allProblems.forEach(problem => {
+                const rowClass = problem.lowScoreCount >= 3 ? 'style="background: rgba(239, 68, 68, 0.05)"' : '';
+                html += `<tr ${rowClass}>
+                    <td><strong>${problem.subject}</strong></td>
+                    <td>Paper ${problem.paper}</td>
+                    <td>${problem.avgScore}%</td>
+                    <td><span class="problem-badge">${problem.lowScoreCount}/${problem.attempts}</span></td>
+                    <td>${problem.worstScore}% - ${problem.bestScore}%</td>
+                </tr>`;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
         }
 
         // Tab switching
@@ -777,15 +864,40 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             html2pdf().set(opt).from(element).save();
         });
 
+        document.getElementById('dashboardExportCSVBtn').addEventListener('click', exportToCSV);
+        document.getElementById('dashboardBackupBtn').addEventListener('click', createBackup);
+
+        // Paper analysis button
+        const paperAnalysisBtn = document.getElementById('paperAnalysisBtn');
+        if (paperAnalysisBtn) {
+            paperAnalysisBtn.addEventListener('click', openPaperAnalysisModal);
+        }
+
         // Theme editor button
         document.getElementById('themeEditorBtn').addEventListener('click', openThemeEditor);
+
+        // Import/Export button
+        document.getElementById('importExportBtn').addEventListener('click', openImportModal);
 
         // Close modal on outside click
         document.getElementById('themeEditorModal').addEventListener('click', (e) => {
             if (e.target.id === 'themeEditorModal') closeThemeEditor();
         });
 
+        document.getElementById('importExportModal').addEventListener('click', (e) => {
+            if (e.target.id === 'importExportModal') closeImportExportModal();
+        });
+
+        const paperAnalysisModal = document.getElementById('paperAnalysisModal');
+        if (paperAnalysisModal) {
+            paperAnalysisModal.addEventListener('click', (e) => {
+                if (e.target.id === 'paperAnalysisModal') closePaperAnalysisModal();
+            });
+        }
+
         // Initialize
         loadTheme();
         initializeSidebar();
         renderContent();
+        setupImportExportUI();
+        setupPaperAnalysisUI();
