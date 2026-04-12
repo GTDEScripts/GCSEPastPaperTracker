@@ -869,104 +869,107 @@
 
         .papers-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
             margin-top: 20px;
         }
 
-        .paper-card {
+        .session-block {
             background: var(--bg-secondary);
             border: 2px solid var(--border-color);
             border-radius: 10px;
             padding: 20px;
             transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
             cursor: pointer;
         }
 
-        .paper-card:hover {
+        .session-block:hover {
             border-color: var(--accent);
             box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
             transform: translateY(-4px);
         }
 
-        .paper-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 12px;
-        }
-
-        .paper-card-title {
-            font-weight: 600;
+        .session-header {
+            font-weight: 700;
             color: var(--accent-dark);
             font-size: 1.1em;
-        }
-
-        .paper-card-session {
-            font-size: 0.85em;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .paper-card-score {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-        }
-
-        .paper-card-label {
-            color: var(--text-secondary);
-            font-size: 0.9em;
-        }
-
-        .paper-card-value {
-            font-weight: 600;
-            color: var(--accent);
-            font-size: 1.1em;
-        }
-
-        .paper-card-percentage {
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--accent);
             text-align: center;
-            padding: 8px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 1.2em;
         }
 
-        .paper-card-percentage.excellent {
+        .session-papers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+            gap: 15px;
+        }
+
+        .paper-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .paper-column:hover {
+            border-color: var(--accent);
+            background: var(--bg-tertiary);
+        }
+
+        .paper-label {
+            font-weight: 700;
+            color: var(--accent-dark);
+            font-size: 1em;
+        }
+
+        .paper-score {
+            font-size: 0.9em;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .paper-percentage {
+            text-align: center;
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.9em;
+            width: 100%;
+        }
+
+        .paper-percentage.excellent {
             background: rgba(16, 185, 129, 0.2);
             color: #10b981;
         }
 
-        .paper-card-percentage.good {
+        .paper-percentage.good {
             background: rgba(59, 130, 246, 0.2);
             color: #3b82f6;
         }
 
-        .paper-card-percentage.average {
+        .paper-percentage.average {
             background: rgba(245, 158, 11, 0.2);
             color: #f59e0b;
         }
 
-        .paper-card-percentage.poor {
+        .paper-percentage.poor {
             background: rgba(239, 68, 68, 0.2);
             color: #ef4444;
         }
 
-        .paper-card-percentage.empty {
-            background: var(--bg-tertiary);
+        .paper-percentage.empty {
+            background: var(--bg-secondary);
             color: var(--text-secondary);
         }
 
-        .paper-card-difficulty {
-            text-align: center;
-            font-size: 2em;
-            padding: 8px 0;
+        .paper-emoji {
+            font-size: 1.5em;
         }
 
         .stat-card {

@@ -257,12 +257,24 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             const sessions = sessionsBySubject[currentSubject];
             const paperCount = papersBySubject[currentSubject];
 
-            for (let paper = 1; paper <= paperCount; paper++) {
-                for (const session of sessions) {
-                    const data = getPaperData(currentSubject, session.year, session.period, paper);
-                    const card = document.createElement('div');
-                    card.className = 'paper-card';
+            // Create session blocks
+            sessions.forEach(session => {
+                const sessionBlock = document.createElement('div');
+                sessionBlock.className = 'session-block';
 
+                // Header with year and period
+                const header = document.createElement('div');
+                header.className = 'session-header';
+                header.textContent = `${currentSubject} ${session.year} ${session.period}`;
+                sessionBlock.appendChild(header);
+
+                // Papers container
+                const papersContainer = document.createElement('div');
+                papersContainer.className = 'session-papers';
+
+                // Create paper columns
+                for (let paper = 1; paper <= paperCount; paper++) {
+                    const data = getPaperData(currentSubject, session.year, session.period, paper);
                     const percentage = data.score !== null ? Math.round((data.score / data.max) * 100) : null;
                     let percentageClass = 'empty';
                     if (percentage !== null) {
@@ -276,31 +288,28 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                     const scoreText = data.score !== null ? `${data.score}/${data.max}` : '-';
                     const percentageText = percentage !== null ? `${percentage}%` : '-';
 
-                    card.innerHTML = `
-                        <div class="paper-card-header">
-                            <span class="paper-card-title">Paper ${paper}</span>
-                            <span class="paper-card-session">${session.year}</span>
-                        </div>
-                        <div class="paper-card-session" style="text-align: center; font-size: 0.9em; color: var(--text-secondary);">${session.period}</div>
-                        <div class="paper-card-score">
-                            <span class="paper-card-label">Score:</span>
-                            <span class="paper-card-value">${scoreText}</span>
-                        </div>
-                        <div class="paper-card-percentage ${percentageClass}">${percentageText}</div>
-                        <div class="paper-card-difficulty">${difficultyEmoji}</div>
+                    const paperCol = document.createElement('div');
+                    paperCol.className = 'paper-column';
+                    paperCol.innerHTML = `
+                        <div class="paper-label">P${paper}</div>
+                        <div class="paper-score">${scoreText}</div>
+                        <div class="paper-percentage ${percentageClass}">${percentageText}</div>
+                        <div class="paper-emoji">${difficultyEmoji}</div>
                     `;
 
-                    card.addEventListener('click', () => {
-                        // Switch back to sessions view
+                    paperCol.addEventListener('click', () => {
                         isGridView = false;
                         sessionsContainer.style.display = 'block';
                         papersGridContainer.style.display = 'none';
                         viewToggleBtn.textContent = '📋 Grid View';
                     });
 
-                    container.appendChild(card);
+                    papersContainer.appendChild(paperCol);
                 }
-            }
+
+                sessionBlock.appendChild(papersContainer);
+                container.appendChild(sessionBlock);
+            });
         }
 
         function getDifficultyEmoji(difficulty) {
