@@ -484,12 +484,19 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
         }
 
         function renderDashboard() {
+            const statsGrid = document.getElementById('statsGrid');
+            const heatmapContainer = document.getElementById('heatmapContainer');
             const subjectGrid = document.getElementById('subjectGrid');
             const weakAreasContainer = document.getElementById('weakAreasContainer');
 
+            statsGrid.innerHTML = '';
+            heatmapContainer.innerHTML = '';
             subjectGrid.innerHTML = '';
             weakAreasContainer.innerHTML = '';
 
+            // Calculate Statistics
+            let totalPapers = 0, completedPapers = 0, totalScore = 0, totalMax = 0;
+            let bestSubject = '', bestScore = 0, worstSubject = '', worstScore = 100;
             const subjectData = {};
             let allProgress = [];
             let weakAreas = [];
@@ -517,7 +524,22 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 });
 
                 const avgPercent = totalMax > 0 ? Math.round((totalScore / totalMax) * 100) : 0;
-                subjectData[subject] = { avgPercent, completedPapers, totalPapers: sessions.length * paperCount };
+                subjectData[subject] = { avgPercent, completedPapers, totalPapers: sessions.length * paperCount, totalScore, totalMax };
+
+                // Track best/worst subjects
+                if (avgPercent > bestScore && avgPercent > 0) {
+                    bestScore = avgPercent;
+                    bestSubject = subject;
+                }
+                if (avgPercent > 0 && avgPercent < worstScore) {
+                    worstScore = avgPercent;
+                    worstSubject = subject;
+                }
+
+                totalPapers += sessions.length * paperCount;
+                completedPapers += completedPapers || 0;
+                totalScore += totalScore || 0;
+                totalMax += totalMax || 0;
 
                 const card = document.createElement('div');
                 card.className = 'subject-card';
@@ -589,6 +611,99 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 }
             });
             comparisonChart = comparisonChart_new;
+
+            // Render Statistics Cards
+            const statsGrid = document.getElementById('statsGrid');
+            const overallPercent = totalMax > 0 ? Math.round((totalScore / totalMax) * 100) : 0;
+            const improvementRate = totalMax > 0 ? ((totalScore / totalMax) * 100).toFixed(1) : 0;
+
+            const statsCards = [
+                { label: 'Overall Average', value: overallPercent + '%', sub: 'across all subjects' },
+                { label: 'Papers Completed', value: completedPapers, sub: `of ${totalPapers} papers` },
+                { label: 'Best Subject', value: bestSubject || '-', sub: bestScore + '%' },
+                { label: 'Total Score', value: totalScore, sub: `out of ${totalMax}` }
+            ];
+
+            statsCards.forEach((stat, idx) => {
+                const card = document.createElement('div');
+                card.className = 'stat-card';
+                card.style.animationDelay = (idx * 0.1) + 's';
+                card.innerHTML = `
+                    <h4>${stat.label}</h4>
+                    <div class="big-number">${stat.value}</div>
+                    <div class="sub-text">${stat.sub}</div>
+                `;
+                statsGrid.appendChild(card);
+            });
+
+            // Render Heatmap
+            const heatmapContainer = document.getElementById('heatmapContainer');
+            let heatmapHTML = '<h3>Performance by Subject & Year</h3><table class="heatmap-table"><thead><tr><th>Subject</th>';
+
+            // Get all unique years
+            const allYears = new Set();
+            subjects.forEach(subject => {
+                sessionsBySubject[subject].forEach(session => allYears.add(session.year));
+            });
+            const yearsArray = Array.from(allYears).sort();
+
+            yearsArray.forEach(year => {
+                heatmapHTML += `<th>${year}</th>`;
+            });
+            heatmapHTML += '</tr></thead><tbody>';
+
+            subjects.forEach(subject => {
+                heatmapHTML += `<tr><td class="heatmap-subject-label">${subject}</td>`;
+
+                yearsArray.forEach(year => {
+                    let yearScore = null;
+                    let yearMax = 0;
+                    const sessions = sessionsBySubject[subject];
+                    const paperCount = papersBySubject[subject];
+
+                    sessions.forEach(session => {
+                        if (session.year === year) {
+                            for (let p = 1; p <= paperCount; p++) {
+                                const data = getPaperData(subject, session.year, session.period, p);
+                                if (data.score !== null && data.score !== '') {
+                                    if (yearScore === null) yearScore = 0;
+                                    yearScore += data.score;
+                                    yearMax += data.max;
+                                }
+                            }
+                        }
+                    });
+
+                    let cellHTML = '';
+                    if (yearScore === null) {
+                        cellHTML = '<td><span class="heatmap-cell not-done">-</span></td>';
+                    } else {
+                        const percent = Math.round((yearScore / yearMax) * 100);
+                        let cellClass = 'not-done';
+                        if (percent >= 80) cellClass = 'excellent';
+                        else if (percent >= 70) cellClass = 'good';
+                        else if (percent >= 50) cellClass = 'fair';
+                        else cellClass = 'poor';
+                        cellHTML = `<td><span class="heatmap-cell ${cellClass}">${percent}%</span></td>`;
+                    }
+                    heatmapHTML += cellHTML;
+                });
+
+                heatmapHTML += '</tr>';
+            });
+
+            heatmapHTML += '</tbody></table>';
+            heatmapHTML += `
+                <div class="heatmap-legend">
+                    <div class="legend-item"><div class="legend-color" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);"></div> <span>80%+ Excellent</span></div>
+                    <div class="legend-item"><div class="legend-color" style="background: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);"></div> <span>70-79% Good</span></div>
+                    <div class="legend-item"><div class="legend-color" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);"></div> <span>50-69% Fair</span></div>
+                    <div class="legend-item"><div class="legend-color" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);"></div> <span>Below 50% Poor</span></div>
+                    <div class="legend-item"><div class="legend-color" style="background: var(--bg-tertiary);"></div> <span>Not Done</span></div>
+                </div>
+            `;
+
+            heatmapContainer.innerHTML = heatmapHTML;
 
             // Weak Areas
             if (weakAreas.length === 0) {
