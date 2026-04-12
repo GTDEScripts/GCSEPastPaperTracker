@@ -34,15 +34,87 @@
             --border-color: #e0e4f7;
             --accent: #6366f1;
             --accent-dark: #4f46e5;
+            --header-start: #6366f1;
+            --header-end: #d946ef;
         }
 
         body.dark-mode {
             --bg-primary: #1a1a1a;
             --bg-secondary: #2d2d2d;
             --bg-tertiary: #3d3d3d;
-            --text-primary: #e0e0e0;
-            --text-secondary: #b0b0b0;
-            --border-color: #404040;
+            --text-primary: #e8e8e8;
+            --text-secondary: #a8a8a8;
+            --border-color: #444444;
+        }
+
+        body.dark-mode .chart-container {
+            background: linear-gradient(135deg, #252525 0%, #2d2d2d 100%) !important;
+            border: 1px solid #3a3a3a;
+        }
+
+        body.dark-mode .stat-card {
+            background: linear-gradient(135deg, #2d2d2d 0%, #252525 100%) !important;
+            border: 1px solid #3a3a3a;
+        }
+
+        body.dark-mode .stat-card .big-number {
+            color: #6366f1;
+        }
+
+        body.dark-mode .heatmap-container {
+            background: transparent !important;
+        }
+
+        body.dark-mode .heatmap-table {
+            background: #252525;
+            border: 1px solid #3a3a3a;
+        }
+
+        body.dark-mode .heatmap-table th {
+            background: #2d2d2d;
+            border-color: #3a3a3a;
+        }
+
+        body.dark-mode .heatmap-table td {
+            border-color: #3a3a3a;
+        }
+
+        body.dark-mode .subject-grid {
+            background: transparent !important;
+        }
+
+        body.dark-mode .subject-card {
+            background: linear-gradient(135deg, #2d2d2d 0%, #252525 100%);
+            border: 1px solid #3a3a3a;
+        }
+
+        body.dark-mode .weak-areas-container {
+            background: transparent !important;
+        }
+
+        body.dark-mode #weakAreasContainer,
+        body.dark-mode #problemPapersContainer {
+            background: #252525 !important;
+            border: 1px solid #3a3a3a;
+        }
+
+        body.dark-mode #weakAreasContainer table,
+        body.dark-mode #problemPapersContainer table {
+            background: transparent;
+        }
+
+        body.dark-mode #weakAreasContainer th,
+        body.dark-mode #problemPapersContainer th {
+            background: #2d2d2d;
+        }
+
+        body.dark-mode #subjectTrendsContainer {
+            background: transparent !important;
+        }
+
+        body.dark-mode .trend-card {
+            background: linear-gradient(135deg, #2d2d2d 0%, #252525 100%) !important;
+            border: 1px solid #3a3a3a;
         }
 
         body {
@@ -83,7 +155,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+            background: linear-gradient(135deg, var(--header-start) 0%, var(--header-end) 100%);
             color: white;
             padding: 35px 40px;
             display: flex;
@@ -361,7 +433,7 @@
         }
 
         .progress-section {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, var(--header-start) 0%, var(--header-end) 100%);
             color: white;
             padding: 20px;
             border-radius: 10px;

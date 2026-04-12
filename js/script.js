@@ -98,57 +98,83 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 name: 'Indigo',
                 accent: '#6366f1',
                 accentDark: '#4f46e5',
-                bgPrimary: '#ffffff'
+                bgPrimary: '#ffffff',
+                headerStart: '#6366f1',
+                headerEnd: '#d946ef'
             },
             purple: {
                 name: 'Purple Haze',
                 accent: '#a855f7',
                 accentDark: '#7c3aed',
-                bgPrimary: '#ffffff'
+                bgPrimary: '#ffffff',
+                headerStart: '#a855f7',
+                headerEnd: '#f472b6'
             },
             green: {
                 name: 'Emerald',
                 accent: '#10b981',
                 accentDark: '#059669',
-                bgPrimary: '#ffffff'
+                bgPrimary: '#ffffff',
+                headerStart: '#10b981',
+                headerEnd: '#06b6d4'
             },
             red: {
                 name: 'Crimson',
                 accent: '#dc2626',
                 accentDark: '#991b1b',
-                bgPrimary: '#ffffff'
+                bgPrimary: '#ffffff',
+                headerStart: '#dc2626',
+                headerEnd: '#f97316'
             },
             orange: {
                 name: 'Sunset',
                 accent: '#f97316',
                 accentDark: '#ea580c',
-                bgPrimary: '#ffffff'
+                bgPrimary: '#ffffff',
+                headerStart: '#f97316',
+                headerEnd: '#ec4899'
             },
             pink: {
                 name: 'Rose',
                 accent: '#ec4899',
                 accentDark: '#be185d',
-                bgPrimary: '#ffffff'
+                bgPrimary: '#ffffff',
+                headerStart: '#ec4899',
+                headerEnd: '#a855f7'
             }
         };
 
-        function setTheme(accent, accentDark, bgPrimary = null) {
+        function setTheme(accent, accentDark, bgPrimary = null, headerStart = null, headerEnd = null) {
             document.documentElement.style.setProperty('--accent', accent);
             document.documentElement.style.setProperty('--accent-dark', accentDark);
             if (bgPrimary) {
                 document.documentElement.style.setProperty('--bg-primary', bgPrimary);
             }
-            localStorage.setItem('userTheme', JSON.stringify({ accent, accentDark, bgPrimary }));
+            if (headerStart) {
+                document.documentElement.style.setProperty('--header-start', headerStart);
+            }
+            if (headerEnd) {
+                document.documentElement.style.setProperty('--header-end', headerEnd);
+            }
+            localStorage.setItem('userTheme', JSON.stringify({ accent, accentDark, bgPrimary, headerStart, headerEnd }));
         }
 
         function loadTheme() {
             const saved = localStorage.getItem('userTheme');
             if (saved) {
                 const theme = JSON.parse(saved);
-                setTheme(theme.accent, theme.accentDark, theme.bgPrimary);
+                setTheme(theme.accent, theme.accentDark, theme.bgPrimary, theme.headerStart, theme.headerEnd);
                 document.getElementById('accentColor').value = theme.accent;
                 document.getElementById('accentDarkColor').value = theme.accentDark;
                 if (theme.bgPrimary) document.getElementById('bgPrimary').value = theme.bgPrimary;
+                if (theme.headerStart) {
+                    const headerStartInput = document.getElementById('headerStartColor');
+                    if (headerStartInput) headerStartInput.value = theme.headerStart;
+                }
+                if (theme.headerEnd) {
+                    const headerEndInput = document.getElementById('headerEndColor');
+                    if (headerEndInput) headerEndInput.value = theme.headerEnd;
+                }
             }
         }
 
@@ -169,10 +195,14 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 btn.className = 'preset-btn';
                 btn.textContent = theme.name;
                 btn.onclick = () => {
-                    setTheme(theme.accent, theme.accentDark, theme.bgPrimary);
+                    setTheme(theme.accent, theme.accentDark, theme.bgPrimary, theme.headerStart, theme.headerEnd);
                     document.getElementById('accentColor').value = theme.accent;
                     document.getElementById('accentDarkColor').value = theme.accentDark;
                     document.getElementById('bgPrimary').value = theme.bgPrimary;
+                    const headerStartInput = document.getElementById('headerStartColor');
+                    const headerEndInput = document.getElementById('headerEndColor');
+                    if (headerStartInput) headerStartInput.value = theme.headerStart;
+                    if (headerEndInput) headerEndInput.value = theme.headerEnd;
                     document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                 };
@@ -181,23 +211,66 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
         }
 
         function resetTheme() {
-            setTheme(themePresets.default.accent, themePresets.default.accentDark, themePresets.default.bgPrimary);
-            document.getElementById('accentColor').value = themePresets.default.accent;
-            document.getElementById('accentDarkColor').value = themePresets.default.accentDark;
-            document.getElementById('bgPrimary').value = themePresets.default.bgPrimary;
+            const defaultTheme = themePresets.default;
+            setTheme(defaultTheme.accent, defaultTheme.accentDark, defaultTheme.bgPrimary, defaultTheme.headerStart, defaultTheme.headerEnd);
+            document.getElementById('accentColor').value = defaultTheme.accent;
+            document.getElementById('accentDarkColor').value = defaultTheme.accentDark;
+            document.getElementById('bgPrimary').value = defaultTheme.bgPrimary;
+            const headerStartInput = document.getElementById('headerStartColor');
+            const headerEndInput = document.getElementById('headerEndColor');
+            if (headerStartInput) headerStartInput.value = defaultTheme.headerStart;
+            if (headerEndInput) headerEndInput.value = defaultTheme.headerEnd;
         }
 
         // Color picker listeners
         setTimeout(() => {
+            const getHeaderColors = () => {
+                const headerStartInput = document.getElementById('headerStartColor');
+                const headerEndInput = document.getElementById('headerEndColor');
+                return {
+                    headerStart: headerStartInput ? headerStartInput.value : null,
+                    headerEnd: headerEndInput ? headerEndInput.value : null
+                };
+            };
+
             document.getElementById('accentColor').addEventListener('input', (e) => {
-                setTheme(e.target.value, document.getElementById('accentDarkColor').value, document.getElementById('bgPrimary').value);
+                const { headerStart, headerEnd } = getHeaderColors();
+                setTheme(e.target.value, document.getElementById('accentDarkColor').value, document.getElementById('bgPrimary').value, headerStart, headerEnd);
             });
             document.getElementById('accentDarkColor').addEventListener('input', (e) => {
-                setTheme(document.getElementById('accentColor').value, e.target.value, document.getElementById('bgPrimary').value);
+                const { headerStart, headerEnd } = getHeaderColors();
+                setTheme(document.getElementById('accentColor').value, e.target.value, document.getElementById('bgPrimary').value, headerStart, headerEnd);
             });
             document.getElementById('bgPrimary').addEventListener('input', (e) => {
-                setTheme(document.getElementById('accentColor').value, document.getElementById('accentDarkColor').value, e.target.value);
+                const { headerStart, headerEnd } = getHeaderColors();
+                setTheme(document.getElementById('accentColor').value, document.getElementById('accentDarkColor').value, e.target.value, headerStart, headerEnd);
             });
+
+            // Header color listeners
+            const headerStartInput = document.getElementById('headerStartColor');
+            const headerEndInput = document.getElementById('headerEndColor');
+            if (headerStartInput) {
+                headerStartInput.addEventListener('input', (e) => {
+                    setTheme(
+                        document.getElementById('accentColor').value,
+                        document.getElementById('accentDarkColor').value,
+                        document.getElementById('bgPrimary').value,
+                        e.target.value,
+                        headerEndInput ? headerEndInput.value : null
+                    );
+                });
+            }
+            if (headerEndInput) {
+                headerEndInput.addEventListener('input', (e) => {
+                    setTheme(
+                        document.getElementById('accentColor').value,
+                        document.getElementById('accentDarkColor').value,
+                        document.getElementById('bgPrimary').value,
+                        headerStartInput ? headerStartInput.value : null,
+                        e.target.value
+                    );
+                });
+            }
         }, 100);
 
         function getStorageKey(subject, year, period, paper, field) {
