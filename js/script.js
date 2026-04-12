@@ -95,39 +95,39 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
         // Theme presets
         const themePresets = {
             default: {
-                name: 'Default Blue',
-                accent: '#667eea',
-                accentDark: '#1F4E78',
+                name: 'Indigo',
+                accent: '#6366f1',
+                accentDark: '#4f46e5',
                 bgPrimary: '#ffffff'
             },
             purple: {
-                name: 'Purple',
+                name: 'Purple Haze',
                 accent: '#a855f7',
-                accentDark: '#6b21a8',
+                accentDark: '#7c3aed',
                 bgPrimary: '#ffffff'
             },
             green: {
-                name: 'Green',
+                name: 'Emerald',
                 accent: '#10b981',
-                accentDark: '#065f46',
+                accentDark: '#059669',
                 bgPrimary: '#ffffff'
             },
             red: {
-                name: 'Red',
-                accent: '#ef4444',
-                accentDark: '#7f1d1d',
+                name: 'Crimson',
+                accent: '#dc2626',
+                accentDark: '#991b1b',
                 bgPrimary: '#ffffff'
             },
             orange: {
-                name: 'Orange',
+                name: 'Sunset',
                 accent: '#f97316',
-                accentDark: '#7c2d12',
+                accentDark: '#ea580c',
                 bgPrimary: '#ffffff'
             },
             pink: {
-                name: 'Pink',
+                name: 'Rose',
                 accent: '#ec4899',
-                accentDark: '#831843',
+                accentDark: '#be185d',
                 bgPrimary: '#ffffff'
             }
         };
