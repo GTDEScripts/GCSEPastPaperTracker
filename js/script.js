@@ -493,7 +493,7 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                     const scoreInput = document.createElement('input');
                     scoreInput.type = 'number';
                     scoreInput.placeholder = '0';
-                    scoreInput.value = paperData.score || '';
+                    scoreInput.value = paperData.score !== null ? paperData.score : '';
                     scoreInput.min = '0';
 
                     const maxInput = document.createElement('input');
