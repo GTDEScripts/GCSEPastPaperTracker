@@ -559,4 +559,3 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
         // Initialize
         initializeSidebar();
         renderContent();
-    
