@@ -16,6 +16,7 @@
                 <p>Track progress, scores & trends</p>
             </div>
             <div class="header-controls">
+                <button class="theme-editor-btn" id="themeEditorBtn">🎨 Theme</button>
                 <button class="theme-toggle" id="themeToggle">🌙 Dark Mode</button>
             </div>
         </div>
@@ -88,6 +89,43 @@
 
                     <button class="btn btn-success" id="exportDashboardBtn" style="margin-top: 30px;">📥 Export Dashboard PDF</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Editor Modal -->
+    <div class="theme-editor-modal" id="themeEditorModal">
+        <div class="theme-editor-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>🎨 Theme Editor</h2>
+                <button class="close-theme-editor" onclick="closeThemeEditor()">&times;</button>
+            </div>
+
+            <h3 style="font-size: 0.95em; margin-bottom: 12px; color: var(--text-secondary);">Preset Themes</h3>
+            <div class="preset-themes" id="presetThemes"></div>
+
+            <hr style="border: none; border-top: 1px solid var(--border-color); margin: 20px 0;">
+
+            <h3 style="font-size: 0.95em; margin-bottom: 12px; color: var(--text-secondary);">Custom Colors</h3>
+
+            <div class="color-picker-group">
+                <label for="accentColor">Accent Color</label>
+                <input type="color" id="accentColor">
+            </div>
+
+            <div class="color-picker-group">
+                <label for="accentDarkColor">Accent Dark</label>
+                <input type="color" id="accentDarkColor">
+            </div>
+
+            <div class="color-picker-group">
+                <label for="bgPrimary">Background (Light)</label>
+                <input type="color" id="bgPrimary">
+            </div>
+
+            <div class="theme-editor-buttons">
+                <button class="btn-secondary" onclick="resetTheme()">Reset</button>
+                <button class="btn-primary" onclick="closeThemeEditor()">Done</button>
             </div>
         </div>
     </div>

@@ -92,6 +92,114 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
         let progressChart = null;
         let comparisonChart = null;
 
+        // Theme presets
+        const themePresets = {
+            default: {
+                name: 'Default Blue',
+                accent: '#667eea',
+                accentDark: '#1F4E78',
+                bgPrimary: '#ffffff'
+            },
+            purple: {
+                name: 'Purple',
+                accent: '#a855f7',
+                accentDark: '#6b21a8',
+                bgPrimary: '#ffffff'
+            },
+            green: {
+                name: 'Green',
+                accent: '#10b981',
+                accentDark: '#065f46',
+                bgPrimary: '#ffffff'
+            },
+            red: {
+                name: 'Red',
+                accent: '#ef4444',
+                accentDark: '#7f1d1d',
+                bgPrimary: '#ffffff'
+            },
+            orange: {
+                name: 'Orange',
+                accent: '#f97316',
+                accentDark: '#7c2d12',
+                bgPrimary: '#ffffff'
+            },
+            pink: {
+                name: 'Pink',
+                accent: '#ec4899',
+                accentDark: '#831843',
+                bgPrimary: '#ffffff'
+            }
+        };
+
+        function setTheme(accent, accentDark, bgPrimary = null) {
+            document.documentElement.style.setProperty('--accent', accent);
+            document.documentElement.style.setProperty('--accent-dark', accentDark);
+            if (bgPrimary) {
+                document.documentElement.style.setProperty('--bg-primary', bgPrimary);
+            }
+            localStorage.setItem('userTheme', JSON.stringify({ accent, accentDark, bgPrimary }));
+        }
+
+        function loadTheme() {
+            const saved = localStorage.getItem('userTheme');
+            if (saved) {
+                const theme = JSON.parse(saved);
+                setTheme(theme.accent, theme.accentDark, theme.bgPrimary);
+                document.getElementById('accentColor').value = theme.accent;
+                document.getElementById('accentDarkColor').value = theme.accentDark;
+                if (theme.bgPrimary) document.getElementById('bgPrimary').value = theme.bgPrimary;
+            }
+        }
+
+        function openThemeEditor() {
+            document.getElementById('themeEditorModal').classList.add('active');
+            initPresetThemes();
+        }
+
+        function closeThemeEditor() {
+            document.getElementById('themeEditorModal').classList.remove('active');
+        }
+
+        function initPresetThemes() {
+            const container = document.getElementById('presetThemes');
+            container.innerHTML = '';
+            Object.entries(themePresets).forEach(([key, theme]) => {
+                const btn = document.createElement('button');
+                btn.className = 'preset-btn';
+                btn.textContent = theme.name;
+                btn.onclick = () => {
+                    setTheme(theme.accent, theme.accentDark, theme.bgPrimary);
+                    document.getElementById('accentColor').value = theme.accent;
+                    document.getElementById('accentDarkColor').value = theme.accentDark;
+                    document.getElementById('bgPrimary').value = theme.bgPrimary;
+                    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function resetTheme() {
+            setTheme(themePresets.default.accent, themePresets.default.accentDark, themePresets.default.bgPrimary);
+            document.getElementById('accentColor').value = themePresets.default.accent;
+            document.getElementById('accentDarkColor').value = themePresets.default.accentDark;
+            document.getElementById('bgPrimary').value = themePresets.default.bgPrimary;
+        }
+
+        // Color picker listeners
+        setTimeout(() => {
+            document.getElementById('accentColor').addEventListener('input', (e) => {
+                setTheme(e.target.value, document.getElementById('accentDarkColor').value, document.getElementById('bgPrimary').value);
+            });
+            document.getElementById('accentDarkColor').addEventListener('input', (e) => {
+                setTheme(document.getElementById('accentColor').value, e.target.value, document.getElementById('bgPrimary').value);
+            });
+            document.getElementById('bgPrimary').addEventListener('input', (e) => {
+                setTheme(document.getElementById('accentColor').value, document.getElementById('accentDarkColor').value, e.target.value);
+            });
+        }, 100);
+
         function getStorageKey(subject, year, period, paper, field) {
             return `gcse_${subject}_${year}_${period}_paper${paper}_${field}`;
         }
@@ -556,6 +664,15 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             html2pdf().set(opt).from(element).save();
         });
 
+        // Theme editor button
+        document.getElementById('themeEditorBtn').addEventListener('click', openThemeEditor);
+
+        // Close modal on outside click
+        document.getElementById('themeEditorModal').addEventListener('click', (e) => {
+            if (e.target.id === 'themeEditorModal') closeThemeEditor();
+        });
+
         // Initialize
+        loadTheme();
         initializeSidebar();
         renderContent();
