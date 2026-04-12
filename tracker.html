@@ -796,12 +796,15 @@
             const notesKey = getStorageKey(subject, year, period, paper, 'notes');
             const defaultMax = defaultMaxMarks[subject][paper - 1];
 
+            const scoreValue = localStorage.getItem(scoreKey);
+            const score = scoreValue ? parseInt(scoreValue) : null;
+
             return {
-                score: localStorage.getItem(scoreKey) ? parseInt(localStorage.getItem(scoreKey)) : null,
+                score: score,
                 max: localStorage.getItem(maxKey) ? parseInt(localStorage.getItem(maxKey)) : defaultMax,
                 difficulty: localStorage.getItem(diffKey) || 'medium',
                 notes: localStorage.getItem(notesKey) || '',
-                completed: localStorage.getItem(scoreKey) !== null
+                completed: scoreValue !== null && scoreValue !== ''
             };
         }
 
@@ -1003,13 +1006,15 @@
 
             for (let paper = 1; paper <= paperCount; paper++) {
                 const data = getPaperData(currentSubject, year, period, paper);
-                if (data.score !== null) {
+                const percentDiv = document.getElementById(`percent_${year}_${period}_${paper}`);
+
+                if (data.score !== null && data.score !== '') {
                     totalScore += data.score;
                     totalMax += data.max;
-
-                    const percentDiv = document.getElementById(`percent_${year}_${period}_${paper}`);
                     const percent = Math.round((data.score / data.max) * 100);
                     percentDiv.textContent = percent + '%';
+                } else {
+                    percentDiv.textContent = '-';
                 }
             }
 
