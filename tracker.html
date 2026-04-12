@@ -288,9 +288,25 @@
             border-radius: 8px;
             border: 2px solid var(--border-color);
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr auto auto;
+            grid-template-columns: 100px 120px 80px 1fr 80px;
             gap: 15px;
             align-items: center;
+        }
+
+        @media (max-width: 1200px) {
+            .paper {
+                grid-template-columns: 100px 120px 80px;
+                row-gap: 10px;
+            }
+
+            .emoji-rating {
+                grid-column: 1 / -1;
+                justify-content: flex-start;
+            }
+
+            .note-btn {
+                grid-column: 1 / -1;
+            }
         }
 
         .paper-label {
@@ -342,19 +358,46 @@
             color: #64b5f6;
         }
 
-        .difficulty-select {
-            padding: 8px;
-            border: 2px solid var(--border-color);
-            border-radius: 5px;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            cursor: pointer;
-            font-size: 0.9em;
+        .emoji-rating {
+            display: flex;
+            gap: 8px;
+            align-items: center;
         }
 
-        .difficulty-select:focus {
-            outline: none;
+        .emoji-btn {
+            background: none;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .emoji-btn:hover {
+            transform: scale(1.15);
             border-color: var(--accent);
+        }
+
+        .emoji-btn.selected {
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: scale(1.2);
+        }
+
+        .emoji-label {
+            font-size: 0.75em;
+            color: var(--text-secondary);
+            display: none;
+        }
+
+        @media (min-width: 1400px) {
+            .emoji-label {
+                display: inline;
+            }
         }
 
         .note-btn {
@@ -884,12 +927,30 @@
                         percentDiv.textContent = '-';
                     }
 
-                    const diffSelect = document.createElement('select');
-                    diffSelect.className = 'difficulty-select';
-                    diffSelect.innerHTML = '<option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option>';
-                    diffSelect.value = paperData.difficulty;
-                    diffSelect.addEventListener('change', (e) => {
-                        savePaperData(currentSubject, session.year, session.period, paper, scoreInput.value || null, maxInput.value, e.target.value);
+                    const diffContainer = document.createElement('div');
+                    diffContainer.className = 'emoji-rating';
+
+                    const difficulties = [
+                        { emoji: '😭', label: 'Very Hard', value: 'veryhard' },
+                        { emoji: '😕', label: 'Hard', value: 'hard' },
+                        { emoji: '😐', label: 'Medium', value: 'medium' },
+                        { emoji: '🙂', label: 'Easy', value: 'easy' },
+                        { emoji: '😄', label: 'Very Easy', value: 'veryeasy' }
+                    ];
+
+                    difficulties.forEach(diff => {
+                        const btn = document.createElement('button');
+                        btn.className = 'emoji-btn' + (paperData.difficulty === diff.value ? ' selected' : '');
+                        btn.innerHTML = `${diff.emoji}<span class="emoji-label">${diff.label}</span>`;
+                        btn.title = diff.label;
+                        btn.onclick = (e) => {
+                            e.preventDefault();
+                            document.querySelectorAll(`.emoji-btn[data-session="${session.year}_${session.period}_${paper}"]`).forEach(b => b.classList.remove('selected'));
+                            btn.classList.add('selected');
+                            savePaperData(currentSubject, session.year, session.period, paper, scoreInput.value || null, maxInput.value, diff.value);
+                        };
+                        btn.setAttribute('data-session', `${session.year}_${session.period}_${paper}`);
+                        diffContainer.appendChild(btn);
                     });
 
                     const noteBtn = document.createElement('button');
@@ -900,7 +961,7 @@
                     paperDiv.appendChild(labelDiv);
                     paperDiv.appendChild(scoreInputDiv);
                     paperDiv.appendChild(percentDiv);
-                    paperDiv.appendChild(diffSelect);
+                    paperDiv.appendChild(diffContainer);
                     paperDiv.appendChild(noteBtn);
                     papersDiv.appendChild(paperDiv);
                 }
