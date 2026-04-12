@@ -229,6 +229,91 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             if (headerEndInput) headerEndInput.value = defaultTheme.headerEnd;
         }
 
+        // Grid View Toggle
+        let isGridView = false;
+
+        function toggleGridView() {
+            isGridView = !isGridView;
+            const sessionsContainer = document.getElementById('sessionsContainer');
+            const papersGridContainer = document.getElementById('papersGridContainer');
+            const viewToggleBtn = document.getElementById('viewToggleBtn');
+
+            if (isGridView) {
+                sessionsContainer.style.display = 'none';
+                papersGridContainer.style.display = 'grid';
+                viewToggleBtn.textContent = '📋 Sessions View';
+                renderPapersGrid();
+            } else {
+                sessionsContainer.style.display = 'block';
+                papersGridContainer.style.display = 'none';
+                viewToggleBtn.textContent = '📋 Grid View';
+            }
+        }
+
+        function renderPapersGrid() {
+            const container = document.getElementById('papersGridContainer');
+            container.innerHTML = '';
+
+            const sessions = sessionsBySubject[currentSubject];
+            const paperCount = papersBySubject[currentSubject];
+
+            for (let paper = 1; paper <= paperCount; paper++) {
+                for (const session of sessions) {
+                    const data = getPaperData(currentSubject, session.year, session.period, paper);
+                    const card = document.createElement('div');
+                    card.className = 'paper-card';
+
+                    const percentage = data.score !== null ? Math.round((data.score / data.max) * 100) : null;
+                    let percentageClass = 'empty';
+                    if (percentage !== null) {
+                        if (percentage >= 80) percentageClass = 'excellent';
+                        else if (percentage >= 70) percentageClass = 'good';
+                        else if (percentage >= 60) percentageClass = 'average';
+                        else percentageClass = 'poor';
+                    }
+
+                    const difficultyEmoji = data.difficulty ? getDifficultyEmoji(data.difficulty) : '❓';
+                    const scoreText = data.score !== null ? `${data.score}/${data.max}` : '-';
+                    const percentageText = percentage !== null ? `${percentage}%` : '-';
+
+                    card.innerHTML = `
+                        <div class="paper-card-header">
+                            <span class="paper-card-title">Paper ${paper}</span>
+                            <span class="paper-card-session">${session.year}</span>
+                        </div>
+                        <div class="paper-card-session" style="text-align: center; font-size: 0.9em; color: var(--text-secondary);">${session.period}</div>
+                        <div class="paper-card-score">
+                            <span class="paper-card-label">Score:</span>
+                            <span class="paper-card-value">${scoreText}</span>
+                        </div>
+                        <div class="paper-card-percentage ${percentageClass}">${percentageText}</div>
+                        <div class="paper-card-difficulty">${difficultyEmoji}</div>
+                    `;
+
+                    card.addEventListener('click', () => {
+                        // Switch back to sessions view
+                        isGridView = false;
+                        sessionsContainer.style.display = 'block';
+                        papersGridContainer.style.display = 'none';
+                        viewToggleBtn.textContent = '📋 Grid View';
+                    });
+
+                    container.appendChild(card);
+                }
+            }
+        }
+
+        function getDifficultyEmoji(difficulty) {
+            const difficultyMap = {
+                'very easy': '😄',
+                'easy': '🙂',
+                'medium': '😐',
+                'hard': '😕',
+                'very hard': '😭'
+            };
+            return difficultyMap[difficulty.toLowerCase()] || '❓';
+        }
+
         // Color picker listeners
         setTimeout(() => {
             const getHeaderColors = () => {
@@ -916,6 +1001,8 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
         }
 
         // Clear all
+        document.getElementById('viewToggleBtn').addEventListener('click', toggleGridView);
+
         document.getElementById('clearBtn').addEventListener('click', () => {
             if (confirm(`Clear all data for ${currentSubject}?`)) {
                 const sessions = sessionsBySubject[currentSubject];
