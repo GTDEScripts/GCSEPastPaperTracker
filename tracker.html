@@ -1002,11 +1002,14 @@
             const sessions = sessionsBySubject[currentSubject];
             const paperCount = papersBySubject[currentSubject];
 
-            let totalScore = 0, totalMax = 0;
+            let totalScore = 0, totalMax = 0, maxPossible = 0;
 
             for (let paper = 1; paper <= paperCount; paper++) {
                 const data = getPaperData(currentSubject, year, period, paper);
                 const percentDiv = document.getElementById(`percent_${year}_${period}_${paper}`);
+
+                // Always add to maxPossible to show total marks available
+                maxPossible += data.max;
 
                 if (data.score !== null && data.score !== '') {
                     totalScore += data.score;
@@ -1023,7 +1026,7 @@
                 const totalPercent = Math.round((totalScore / totalMax) * 100);
                 totalDiv.textContent = `${totalScore} / ${totalMax} (${totalPercent}%)`;
             } else {
-                totalDiv.textContent = '0 / 0';
+                totalDiv.textContent = `0 / ${maxPossible}`;
             }
         }
 
