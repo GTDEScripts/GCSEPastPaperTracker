@@ -348,6 +348,7 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 btn.classList.toggle('active', btn.textContent === subject);
             });
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById('tracker-tab').classList.add('active');
             document.querySelector('[data-tab="tracker"]').classList.add('active');
             renderContent();
