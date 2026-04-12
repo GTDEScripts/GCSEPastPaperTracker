@@ -1,4 +1,4 @@
-const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biology', 'Chemistry', 'Physics', 'History', 'Geography', 'Computer Science'];
+const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biology', 'Chemistry', 'Physics', 'History', 'Geography', 'Computer Science', 'Business'];
 
         const sessionsBySubject = {
             'Mathematics': [
@@ -22,14 +22,14 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 { year: '2024', period: 'June/May' }, { year: '2024', period: 'October/November' }
             ],
             'English Literature': [
-                { year: '2017', period: 'June/May' }, { year: '2017', period: 'October/November' },
-                { year: '2018', period: 'June/May' }, { year: '2018', period: 'October/November' },
-                { year: '2019', period: 'June/May' }, { year: '2019', period: 'October/November' },
+                { year: '2017', period: 'June/May' },
+                { year: '2018', period: 'June/May' },
+                { year: '2019', period: 'June/May' },
                 { year: '2020', period: 'Lockdown' },
-                { year: '2021', period: 'October/November' },
-                { year: '2022', period: 'June/May' }, { year: '2022', period: 'October/November' },
-                { year: '2023', period: 'June/May' }, { year: '2023', period: 'October/November' },
-                { year: '2024', period: 'June/May' }, { year: '2024', period: 'October/November' }
+                { year: '2021', period: 'June/May' },
+                { year: '2022', period: 'June/May' },
+                { year: '2023', period: 'June/May' },
+                { year: '2024', period: 'June/May' }
             ],
             'Biology': [
                 { year: '2017', period: 'June/May' }, { year: '2018', period: 'June/May' },
@@ -66,13 +66,19 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 { year: '2019', period: 'June/May' }, { year: '2020', period: 'Lockdown' },
                 { year: '2021', period: 'June/May' }, { year: '2022', period: 'June/May' },
                 { year: '2023', period: 'June/May' }, { year: '2024', period: 'June/May' }
+            ],
+            'Business': [
+                { year: '2017', period: 'June/May' }, { year: '2018', period: 'June/May' },
+                { year: '2019', period: 'June/May' }, { year: '2020', period: 'Lockdown' },
+                { year: '2021', period: 'June/May' }, { year: '2022', period: 'June/May' },
+                { year: '2023', period: 'June/May' }, { year: '2024', period: 'June/May' }
             ]
         };
 
         const papersBySubject = {
             'Mathematics': 3, 'English Language': 2, 'English Literature': 2,
             'Biology': 2, 'Chemistry': 2, 'Physics': 2, 'History': 3,
-            'Geography': 3, 'Computer Science': 2
+            'Geography': 3, 'Computer Science': 2, 'Business': 2
         };
 
         const defaultMaxMarks = {
@@ -84,7 +90,8 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             'Physics': [100, 100],
             'History': [96, 96, 96],
             'Geography': [88, 88, 76],
-            'Computer Science': [80, 80]
+            'Computer Science': [80, 80],
+            'Business': [80, 80]
         };
 
         let currentSubject = 'Mathematics';
