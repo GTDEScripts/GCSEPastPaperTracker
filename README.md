@@ -42,12 +42,17 @@ An interactive web-based tracker for managing and monitoring your GCSE past pape
 
 ## How to Use
 
-1. Open `tracker.html` in your web browser
-2. Select a subject from the sidebar
-3. For each exam session, enter your score and max marks for each paper
-4. Percentages calculate automatically
-5. Track your progress with the dashboard at the top
-6. Export your scores at any time using the Export button
+### Online (GitHub Pages)
+Visit: https://gtdescripts.github.io/GCSEPastPaperTracker/
+
+### Local
+1. Download `index.html` from this repository
+2. Open it in any modern web browser
+3. Select a subject from the sidebar
+4. For each exam session, enter your score and max marks for each paper
+5. Percentages calculate automatically
+6. Track your progress with the dashboard at the top
+7. Export your scores at any time using the Export button
 
 ## Exam Sessions Included
 
@@ -62,7 +67,12 @@ An interactive web-based tracker for managing and monitoring your GCSE past pape
 
 ## Installation
 
-Simply download `tracker.html` and open it in any modern web browser. No installation required!
+**No installation needed!** 
+
+- **Online**: Access via GitHub Pages link above
+- **Offline**: Download `index.html` and open in your browser
+- Works on desktop, tablet, and mobile devices
+- All data stored locally in your browser
 
 ## Technologies
 
