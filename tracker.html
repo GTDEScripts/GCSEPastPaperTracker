@@ -919,14 +919,14 @@
                     maxInput.style.width = '60px';
 
                     scoreInput.addEventListener('change', (e) => {
-                        savePaperData(currentSubject, session.year, session.period, paper, e.target.value || null, maxInput.value, diffSelect.value);
+                        savePaperData(currentSubject, session.year, session.period, paper, e.target.value || null, maxInput.value, paperData.difficulty);
                         updateSessionTotal(session.year, session.period);
                         updateProgress();
                         renderDashboard();
                     });
 
                     maxInput.addEventListener('change', (e) => {
-                        savePaperData(currentSubject, session.year, session.period, paper, scoreInput.value || null, e.target.value, diffSelect.value);
+                        savePaperData(currentSubject, session.year, session.period, paper, scoreInput.value || null, e.target.value, paperData.difficulty);
                         updateSessionTotal(session.year, session.period);
                         updateProgress();
                         renderDashboard();
