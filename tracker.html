@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GCSE Past Paper Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -11,17 +13,43 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --border-color: #e9ecef;
+            --accent: #667eea;
+            --accent-dark: #1F4E78;
+        }
+
+        body.dark-mode {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #3d3d3d;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --border-color: #404040;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            color: var(--text-primary);
+            transition: background 0.3s;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            background: white;
+            background: var(--bg-primary);
             border-radius: 15px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
@@ -30,18 +58,41 @@
         .header {
             background: linear-gradient(135deg, #1F4E78 0%, #2d5a96 100%);
             color: white;
-            padding: 30px;
-            text-align: center;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+        .header-left h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
         }
 
-        .header p {
-            font-size: 1.1em;
+        .header-left p {
+            font-size: 0.95em;
             opacity: 0.9;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.3);
         }
 
         .main-content {
@@ -50,45 +101,57 @@
 
         .sidebar {
             width: 250px;
-            background: #f8f9fa;
-            border-right: 2px solid #e9ecef;
+            background: var(--bg-secondary);
+            border-right: 2px solid var(--border-color);
             overflow-y: auto;
             padding: 20px;
             max-height: calc(100vh - 200px);
         }
 
         .sidebar h3 {
-            color: #1F4E78;
+            color: var(--accent-dark);
             margin-bottom: 15px;
             font-size: 0.9em;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .subject-btn {
+        .tab-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+
+        .tab-btn, .subject-btn {
             width: 100%;
             padding: 12px;
-            margin-bottom: 8px;
             border: 2px solid transparent;
-            background: white;
+            background: var(--bg-primary);
             border-radius: 8px;
             cursor: pointer;
             font-size: 1em;
             text-align: left;
             transition: all 0.3s ease;
-            color: #333;
+            color: var(--text-primary);
         }
 
-        .subject-btn:hover {
-            background: #e9ecef;
-            border-color: #667eea;
+        .tab-btn:hover, .subject-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--accent);
         }
 
-        .subject-btn.active {
-            background: #667eea;
+        .tab-btn.active, .subject-btn.active {
+            background: var(--accent);
             color: white;
-            border-color: #667eea;
+            border-color: var(--accent);
             font-weight: 600;
+        }
+
+        .subject-list {
+            margin-top: 15px;
+            border-top: 2px solid var(--border-color);
+            padding-top: 15px;
         }
 
         .content {
@@ -98,8 +161,16 @@
             max-height: calc(100vh - 200px);
         }
 
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
         .subject-title {
-            color: #1F4E78;
+            color: var(--accent-dark);
             margin-bottom: 30px;
             font-size: 2em;
         }
@@ -127,8 +198,47 @@
         }
 
         .progress-item p {
-            font-size: 2em;
+            font-size: 1.8em;
             font-weight: bold;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-success:hover {
+            background: #218838;
         }
 
         .sessions-grid {
@@ -137,10 +247,10 @@
         }
 
         .session {
-            background: #f8f9fa;
+            background: var(--bg-secondary);
             padding: 25px;
             border-radius: 10px;
-            border-left: 5px solid #667eea;
+            border-left: 5px solid var(--accent);
         }
 
         .session-header {
@@ -148,18 +258,18 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            border-bottom: 2px solid #e9ecef;
+            border-bottom: 2px solid var(--border-color);
             padding-bottom: 15px;
         }
 
         .session-title {
-            color: #1F4E78;
+            color: var(--accent-dark);
             font-size: 1.3em;
             font-weight: 600;
         }
 
         .session-total {
-            background: #1F4E78;
+            background: var(--accent-dark);
             color: white;
             padding: 8px 15px;
             border-radius: 20px;
@@ -173,19 +283,19 @@
         }
 
         .paper {
-            background: white;
+            background: var(--bg-primary);
             padding: 15px;
             border-radius: 8px;
-            border: 2px solid #e9ecef;
+            border: 2px solid var(--border-color);
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr auto;
+            grid-template-columns: 1fr 1fr 1fr auto auto;
             gap: 15px;
             align-items: center;
         }
 
         .paper-label {
             font-weight: 600;
-            color: #1F4E78;
+            color: var(--accent-dark);
             min-width: 100px;
         }
 
@@ -198,21 +308,23 @@
         .paper-input input {
             width: 60px;
             padding: 8px;
-            border: 2px solid #e9ecef;
+            border: 2px solid var(--border-color);
             border-radius: 5px;
             font-size: 1em;
             font-weight: 600;
+            background: var(--bg-primary);
+            color: var(--text-primary);
         }
 
         .paper-input input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--accent);
         }
 
         .paper-input span {
-            color: #666;
+            color: var(--text-secondary);
             font-size: 0.95em;
-            min-width: 40px;
+            min-width: 30px;
         }
 
         .percentage {
@@ -225,50 +337,158 @@
             text-align: center;
         }
 
-        .max-marks-input {
-            display: flex;
-            gap: 5px;
-            align-items: center;
+        body.dark-mode .percentage {
+            background: #1a3a52;
+            color: #64b5f6;
+        }
+
+        .difficulty-select {
+            padding: 8px;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .difficulty-select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .note-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
             font-size: 0.85em;
-        }
-
-        .max-marks-input input {
-            width: 50px;
-            padding: 5px;
-            border: 1px solid #e9ecef;
-            border-radius: 3px;
-        }
-
-        .clear-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9em;
             transition: background 0.3s;
-            margin-top: 10px;
         }
 
-        .clear-btn:hover {
-            background: #c82333;
+        .note-btn:hover {
+            background: #5568d3;
         }
 
-        .export-btn {
-            background: #28a745;
-            color: white;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-primary);
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .modal-header h2 {
+            color: var(--accent-dark);
+        }
+
+        .close-btn {
+            background: none;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            font-size: 1.5em;
             cursor: pointer;
-            font-size: 0.9em;
-            transition: background 0.3s;
-            margin-left: 10px;
+            color: var(--text-secondary);
         }
 
-        .export-btn:hover {
-            background: #218838;
+        .modal textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1em;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: var(--bg-secondary);
+            padding: 25px;
+            border-radius: 10px;
+            position: relative;
+            height: 400px;
+        }
+
+        .chart-container h3 {
+            color: var(--accent-dark);
+            margin-bottom: 20px;
+        }
+
+        .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .subject-card {
+            background: var(--bg-secondary);
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid var(--accent);
+        }
+
+        .subject-card h3 {
+            color: var(--accent-dark);
+            margin-bottom: 15px;
+        }
+
+        .subject-stats {
+            display: grid;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--accent);
         }
 
         @media (max-width: 768px) {
@@ -278,9 +498,9 @@
 
             .sidebar {
                 width: 100%;
-                border-right: none;
-                border-bottom: 2px solid #e9ecef;
                 max-height: none;
+                border-right: none;
+                border-bottom: 2px solid var(--border-color);
             }
 
             .paper {
@@ -290,187 +510,199 @@
             .progress-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media print {
+            body, .container {
+                background: white;
+            }
+            .header-controls, .sidebar, .button-group {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📚 GCSE Past Paper Tracker</h1>
-            <p>Track progress & scores across all subjects</p>
+            <div class="header-left">
+                <h1>📚 GCSE Past Paper Tracker</h1>
+                <p>Track progress, scores & trends</p>
+            </div>
+            <div class="header-controls">
+                <button class="theme-toggle" id="themeToggle">🌙 Dark Mode</button>
+            </div>
         </div>
 
         <div class="main-content">
             <div class="sidebar">
-                <h3>Subjects</h3>
-                <div id="subjectList"></div>
-            </div>
-
-            <div class="content">
-                <h2 class="subject-title" id="subjectTitle">Mathematics</h2>
-
-                <div class="progress-section">
-                    <div class="progress-grid">
-                        <div class="progress-item">
-                            <h4>Papers Done</h4>
-                            <p id="completedCount">0</p>
-                        </div>
-                        <div class="progress-item">
-                            <h4>Total Papers</h4>
-                            <p id="totalCount">0</p>
-                        </div>
-                        <div class="progress-item">
-                            <h4>Avg Score</h4>
-                            <p id="avgScore">-</p>
-                        </div>
-                        <div class="progress-item">
-                            <h4>Best Session</h4>
-                            <p id="bestSession">-</p>
-                        </div>
-                    </div>
-                    <button class="clear-btn" id="clearBtn">Clear All</button>
-                    <button class="export-btn" id="exportBtn">Export Data</button>
+                <h3>Navigation</h3>
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="tracker">📊 Tracker</button>
+                    <button class="tab-btn" data-tab="dashboard">📈 Dashboard</button>
                 </div>
 
-                <div class="sessions-grid" id="sessionsContainer"></div>
+                <h3 style="margin-top: 20px;">Subjects</h3>
+                <div class="subject-list" id="subjectList"></div>
+            </div>
+
+            <!-- TRACKER TAB -->
+            <div class="content">
+                <div id="tracker-tab" class="tab-content active">
+                    <h2 class="subject-title" id="subjectTitle">Mathematics</h2>
+
+                    <div class="progress-section">
+                        <div class="progress-grid">
+                            <div class="progress-item">
+                                <h4>Papers Done</h4>
+                                <p id="completedCount">0</p>
+                            </div>
+                            <div class="progress-item">
+                                <h4>Total Papers</h4>
+                                <p id="totalCount">0</p>
+                            </div>
+                            <div class="progress-item">
+                                <h4>Avg Score</h4>
+                                <p id="avgScore">-</p>
+                            </div>
+                            <div class="progress-item">
+                                <h4>Best Session</h4>
+                                <p id="bestSession">-</p>
+                            </div>
+                        </div>
+                        <div class="button-group">
+                            <button class="btn btn-success" id="exportBtn">📥 Export PDF</button>
+                            <button class="btn btn-secondary" id="clearBtn">🗑️ Clear All</button>
+                        </div>
+                    </div>
+
+                    <div class="sessions-grid" id="sessionsContainer"></div>
+                </div>
+
+                <!-- DASHBOARD TAB -->
+                <div id="dashboard-tab" class="tab-content">
+                    <h2 class="subject-title">📊 Performance Dashboard</h2>
+
+                    <div class="dashboard-grid">
+                        <div class="chart-container">
+                            <h3>Your Progress (All Subjects)</h3>
+                            <canvas id="progressChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Subject Comparison</h3>
+                            <canvas id="comparisonChart"></canvas>
+                        </div>
+                    </div>
+
+                    <h3 style="color: var(--accent-dark); margin: 30px 0 20px 0;">Subject Breakdown</h3>
+                    <div class="subject-grid" id="subjectGrid"></div>
+
+                    <h3 style="color: var(--accent-dark); margin: 30px 0 20px 0;">Weak Areas (Below 70%)</h3>
+                    <div id="weakAreasContainer" style="background: var(--bg-secondary); padding: 20px; border-radius: 10px;"></div>
+
+                    <button class="btn btn-success" id="exportDashboardBtn" style="margin-top: 30px;">📥 Export Dashboard PDF</button>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Notes Modal -->
+    <div class="modal" id="notesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="notesTitle">Notes</h2>
+                <button class="close-btn" onclick="closeNotesModal()">&times;</button>
+            </div>
+            <textarea id="notesText" placeholder="Write your notes here...&#10;- What went wrong?&#10;- Topics to review&#10;- Key mistakes"></textarea>
+            <button class="btn btn-success" onclick="saveNotes()">Save Notes</button>
+        </div>
+    </div>
+
     <script>
-        const subjects = [
-            'Mathematics',
-            'English Language',
-            'English Literature',
-            'Biology',
-            'Chemistry',
-            'Physics',
-            'History',
-            'Geography',
-            'Computer Science'
-        ];
+        const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biology', 'Chemistry', 'Physics', 'History', 'Geography', 'Computer Science'];
 
         const sessionsBySubject = {
             'Mathematics': [
-                { year: '2017', period: 'June' },
-                { year: '2017', period: 'November' },
-                { year: '2018', period: 'June' },
-                { year: '2018', period: 'November' },
-                { year: '2019', period: 'June' },
-                { year: '2019', period: 'November' },
+                { year: '2017', period: 'June' }, { year: '2017', period: 'November' },
+                { year: '2018', period: 'June' }, { year: '2018', period: 'November' },
+                { year: '2019', period: 'June' }, { year: '2019', period: 'November' },
                 { year: '2020', period: 'Lockdown' },
                 { year: '2021', period: 'November' },
-                { year: '2022', period: 'June' },
-                { year: '2022', period: 'November' },
-                { year: '2023', period: 'June' },
-                { year: '2023', period: 'November' },
-                { year: '2024', period: 'May' },
-                { year: '2024', period: 'November' }
+                { year: '2022', period: 'June' }, { year: '2022', period: 'November' },
+                { year: '2023', period: 'June' }, { year: '2023', period: 'November' },
+                { year: '2024', period: 'May' }, { year: '2024', period: 'November' }
             ],
             'English Language': [
-                { year: '2017', period: 'June' },
-                { year: '2017', period: 'November' },
-                { year: '2018', period: 'June' },
-                { year: '2018', period: 'November' },
-                { year: '2019', period: 'June' },
-                { year: '2019', period: 'November' },
+                { year: '2017', period: 'June' }, { year: '2017', period: 'November' },
+                { year: '2018', period: 'June' }, { year: '2018', period: 'November' },
+                { year: '2019', period: 'June' }, { year: '2019', period: 'November' },
                 { year: '2020', period: 'Lockdown' },
                 { year: '2021', period: 'November' },
-                { year: '2022', period: 'June' },
-                { year: '2022', period: 'November' },
-                { year: '2023', period: 'June' },
-                { year: '2023', period: 'November' },
-                { year: '2024', period: 'May' },
-                { year: '2024', period: 'November' }
+                { year: '2022', period: 'June' }, { year: '2022', period: 'November' },
+                { year: '2023', period: 'June' }, { year: '2023', period: 'November' },
+                { year: '2024', period: 'May' }, { year: '2024', period: 'November' }
             ],
             'English Literature': [
-                { year: '2017', period: 'June' },
-                { year: '2017', period: 'November' },
-                { year: '2018', period: 'June' },
-                { year: '2018', period: 'November' },
-                { year: '2019', period: 'June' },
-                { year: '2019', period: 'November' },
+                { year: '2017', period: 'June' }, { year: '2017', period: 'November' },
+                { year: '2018', period: 'June' }, { year: '2018', period: 'November' },
+                { year: '2019', period: 'June' }, { year: '2019', period: 'November' },
                 { year: '2020', period: 'Lockdown' },
                 { year: '2021', period: 'November' },
-                { year: '2022', period: 'June' },
-                { year: '2022', period: 'November' },
-                { year: '2023', period: 'June' },
-                { year: '2023', period: 'November' },
-                { year: '2024', period: 'May' },
-                { year: '2024', period: 'November' }
+                { year: '2022', period: 'June' }, { year: '2022', period: 'November' },
+                { year: '2023', period: 'June' }, { year: '2023', period: 'November' },
+                { year: '2024', period: 'May' }, { year: '2024', period: 'November' }
             ],
             'Biology': [
-                { year: '2017', period: 'June' },
-                { year: '2018', period: 'June' },
-                { year: '2019', period: 'June' },
-                { year: '2020', period: 'Lockdown' },
-                { year: '2021', period: 'June' },
-                { year: '2022', period: 'June' },
-                { year: '2023', period: 'June' },
-                { year: '2024', period: 'May' }
+                { year: '2017', period: 'June' }, { year: '2018', period: 'June' },
+                { year: '2019', period: 'June' }, { year: '2020', period: 'Lockdown' },
+                { year: '2021', period: 'June' }, { year: '2022', period: 'June' },
+                { year: '2023', period: 'June' }, { year: '2024', period: 'May' }
             ],
             'Chemistry': [
-                { year: '2017', period: 'June' },
-                { year: '2018', period: 'June' },
-                { year: '2019', period: 'June' },
-                { year: '2020', period: 'Lockdown' },
-                { year: '2021', period: 'June' },
-                { year: '2022', period: 'June' },
-                { year: '2023', period: 'June' },
-                { year: '2024', period: 'May' }
+                { year: '2017', period: 'June' }, { year: '2018', period: 'June' },
+                { year: '2019', period: 'June' }, { year: '2020', period: 'Lockdown' },
+                { year: '2021', period: 'June' }, { year: '2022', period: 'June' },
+                { year: '2023', period: 'June' }, { year: '2024', period: 'May' }
             ],
             'Physics': [
-                { year: '2017', period: 'June' },
-                { year: '2018', period: 'June' },
-                { year: '2019', period: 'June' },
-                { year: '2020', period: 'Lockdown' },
-                { year: '2021', period: 'June' },
-                { year: '2022', period: 'June' },
-                { year: '2023', period: 'June' },
-                { year: '2024', period: 'May' }
+                { year: '2017', period: 'June' }, { year: '2018', period: 'June' },
+                { year: '2019', period: 'June' }, { year: '2020', period: 'Lockdown' },
+                { year: '2021', period: 'June' }, { year: '2022', period: 'June' },
+                { year: '2023', period: 'June' }, { year: '2024', period: 'May' }
             ],
             'History': [
-                { year: '2017', period: 'June' },
-                { year: '2018', period: 'June' },
-                { year: '2019', period: 'June' },
-                { year: '2020', period: 'Lockdown' },
-                { year: '2021', period: 'June' },
-                { year: '2022', period: 'June' },
-                { year: '2023', period: 'June' },
-                { year: '2024', period: 'May' }
+                { year: '2017', period: 'June' }, { year: '2018', period: 'June' },
+                { year: '2019', period: 'June' }, { year: '2020', period: 'Lockdown' },
+                { year: '2021', period: 'June' }, { year: '2022', period: 'June' },
+                { year: '2023', period: 'June' }, { year: '2024', period: 'May' }
             ],
             'Geography': [
-                { year: '2017', period: 'June' },
-                { year: '2018', period: 'June' },
-                { year: '2019', period: 'June' },
-                { year: '2020', period: 'Lockdown' },
-                { year: '2021', period: 'June' },
-                { year: '2022', period: 'June' },
-                { year: '2023', period: 'June' },
-                { year: '2024', period: 'May' }
+                { year: '2017', period: 'June' }, { year: '2018', period: 'June' },
+                { year: '2019', period: 'June' }, { year: '2020', period: 'Lockdown' },
+                { year: '2021', period: 'June' }, { year: '2022', period: 'June' },
+                { year: '2023', period: 'June' }, { year: '2024', period: 'May' }
             ],
             'Computer Science': [
-                { year: '2017', period: 'June' },
-                { year: '2018', period: 'June' },
-                { year: '2019', period: 'June' },
-                { year: '2020', period: 'Lockdown' },
-                { year: '2021', period: 'June' },
-                { year: '2022', period: 'June' },
-                { year: '2023', period: 'June' },
-                { year: '2024', period: 'May' }
+                { year: '2017', period: 'June' }, { year: '2018', period: 'June' },
+                { year: '2019', period: 'June' }, { year: '2020', period: 'Lockdown' },
+                { year: '2021', period: 'June' }, { year: '2022', period: 'June' },
+                { year: '2023', period: 'June' }, { year: '2024', period: 'May' }
             ]
         };
 
         const papersBySubject = {
-            'Mathematics': 3,
-            'English Language': 2,
-            'English Literature': 2,
-            'Biology': 2,
-            'Chemistry': 2,
-            'Physics': 2,
-            'History': 3,
-            'Geography': 3,
-            'Computer Science': 2
+            'Mathematics': 3, 'English Language': 2, 'English Literature': 2,
+            'Biology': 2, 'Chemistry': 2, 'Physics': 2, 'History': 3,
+            'Geography': 3, 'Computer Science': 2
         };
 
         const defaultMaxMarks = {
@@ -486,6 +718,9 @@
         };
 
         let currentSubject = 'Mathematics';
+        let currentNoteKey = null;
+        let progressChart = null;
+        let comparisonChart = null;
 
         function getStorageKey(subject, year, period, paper, field) {
             return `gcse_${subject}_${year}_${period}_paper${paper}_${field}`;
@@ -494,30 +729,52 @@
         function getPaperData(subject, year, period, paper) {
             const scoreKey = getStorageKey(subject, year, period, paper, 'score');
             const maxKey = getStorageKey(subject, year, period, paper, 'max');
-            const completedKey = getStorageKey(subject, year, period, paper, 'completed');
-
+            const diffKey = getStorageKey(subject, year, period, paper, 'difficulty');
+            const notesKey = getStorageKey(subject, year, period, paper, 'notes');
             const defaultMax = defaultMaxMarks[subject][paper - 1];
 
             return {
                 score: localStorage.getItem(scoreKey) ? parseInt(localStorage.getItem(scoreKey)) : null,
                 max: localStorage.getItem(maxKey) ? parseInt(localStorage.getItem(maxKey)) : defaultMax,
-                completed: localStorage.getItem(completedKey) === 'true'
+                difficulty: localStorage.getItem(diffKey) || 'medium',
+                notes: localStorage.getItem(notesKey) || '',
+                completed: localStorage.getItem(scoreKey) !== null
             };
         }
 
-        function savePaperData(subject, year, period, paper, score, max) {
+        function savePaperData(subject, year, period, paper, score, max, difficulty) {
             const scoreKey = getStorageKey(subject, year, period, paper, 'score');
             const maxKey = getStorageKey(subject, year, period, paper, 'max');
-            const completedKey = getStorageKey(subject, year, period, paper, 'completed');
+            const diffKey = getStorageKey(subject, year, period, paper, 'difficulty');
 
             if (score !== null && score !== '') {
                 localStorage.setItem(scoreKey, score);
-                localStorage.setItem(completedKey, 'true');
             } else {
                 localStorage.removeItem(scoreKey);
-                localStorage.removeItem(completedKey);
             }
             localStorage.setItem(maxKey, max);
+            localStorage.setItem(diffKey, difficulty);
+        }
+
+        function openNotesModal(subject, year, period, paper) {
+            currentNoteKey = { subject, year, period, paper };
+            const data = getPaperData(subject, year, period, paper);
+            document.getElementById('notesTitle').textContent = `Notes - ${subject} ${year} ${period} Paper ${paper}`;
+            document.getElementById('notesText').value = data.notes;
+            document.getElementById('notesModal').classList.add('active');
+        }
+
+        function closeNotesModal() {
+            document.getElementById('notesModal').classList.remove('active');
+        }
+
+        function saveNotes() {
+            const notesText = document.getElementById('notesText').value;
+            const { subject, year, period, paper } = currentNoteKey;
+            const notesKey = getStorageKey(subject, year, period, paper, 'notes');
+            localStorage.setItem(notesKey, notesText);
+            closeNotesModal();
+            renderContent();
         }
 
         function initializeSidebar() {
@@ -536,6 +793,9 @@
             document.querySelectorAll('.subject-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.textContent === subject);
             });
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tracker-tab').classList.add('active');
+            document.querySelector('[data-tab="tracker"]').classList.add('active');
             renderContent();
         }
 
@@ -589,32 +849,24 @@
                     scoreInput.value = paperData.score || '';
                     scoreInput.min = '0';
 
-                    scoreInput.addEventListener('input', (e) => {
-                        updateSessionTotal(session.year, session.period);
-                        updateProgress();
-                    });
-
                     const maxInput = document.createElement('input');
                     maxInput.type = 'number';
                     maxInput.value = paperData.max;
                     maxInput.min = '1';
                     maxInput.style.width = '60px';
 
-                    maxInput.addEventListener('change', (e) => {
-                        updateSessionTotal(session.year, session.period);
-                        updateProgress();
-                    });
-
                     scoreInput.addEventListener('change', (e) => {
-                        savePaperData(currentSubject, session.year, session.period, paper, e.target.value || null, maxInput.value);
+                        savePaperData(currentSubject, session.year, session.period, paper, e.target.value || null, maxInput.value, diffSelect.value);
                         updateSessionTotal(session.year, session.period);
                         updateProgress();
+                        renderDashboard();
                     });
 
                     maxInput.addEventListener('change', (e) => {
-                        savePaperData(currentSubject, session.year, session.period, paper, scoreInput.value || null, e.target.value);
+                        savePaperData(currentSubject, session.year, session.period, paper, scoreInput.value || null, e.target.value, diffSelect.value);
                         updateSessionTotal(session.year, session.period);
                         updateProgress();
+                        renderDashboard();
                     });
 
                     scoreInputDiv.appendChild(scoreInput);
@@ -632,9 +884,24 @@
                         percentDiv.textContent = '-';
                     }
 
+                    const diffSelect = document.createElement('select');
+                    diffSelect.className = 'difficulty-select';
+                    diffSelect.innerHTML = '<option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option>';
+                    diffSelect.value = paperData.difficulty;
+                    diffSelect.addEventListener('change', (e) => {
+                        savePaperData(currentSubject, session.year, session.period, paper, scoreInput.value || null, maxInput.value, e.target.value);
+                    });
+
+                    const noteBtn = document.createElement('button');
+                    noteBtn.className = 'note-btn';
+                    noteBtn.textContent = paperData.notes ? '📝 Notes' : '➕ Add';
+                    noteBtn.onclick = () => openNotesModal(currentSubject, session.year, session.period, paper);
+
                     paperDiv.appendChild(labelDiv);
                     paperDiv.appendChild(scoreInputDiv);
                     paperDiv.appendChild(percentDiv);
+                    paperDiv.appendChild(diffSelect);
+                    paperDiv.appendChild(noteBtn);
                     papersDiv.appendChild(paperDiv);
                 }
 
@@ -651,20 +918,14 @@
         function updateSessionTotal(year, period) {
             const sessions = sessionsBySubject[currentSubject];
             const paperCount = papersBySubject[currentSubject];
-            const session = sessions.find(s => s.year === year && s.period === period);
 
-            if (!session) return;
-
-            let totalScore = 0;
-            let totalMax = 0;
-            let completedCount = 0;
+            let totalScore = 0, totalMax = 0;
 
             for (let paper = 1; paper <= paperCount; paper++) {
                 const data = getPaperData(currentSubject, year, period, paper);
                 if (data.score !== null) {
                     totalScore += data.score;
                     totalMax += data.max;
-                    completedCount++;
 
                     const percentDiv = document.getElementById(`percent_${year}_${period}_${paper}`);
                     const percent = Math.round((data.score / data.max) * 100);
@@ -685,16 +946,10 @@
             const sessions = sessionsBySubject[currentSubject];
             const paperCount = papersBySubject[currentSubject];
 
-            let completedCount = 0;
-            let totalCount = 0;
-            let totalScore = 0;
-            let totalMax = 0;
-            let bestPercent = 0;
-            let bestSession = '-';
+            let completedCount = 0, totalCount = 0, totalScore = 0, totalMax = 0, bestPercent = 0, bestSession = '-';
 
             sessions.forEach(session => {
-                let sessionScore = 0;
-                let sessionMax = 0;
+                let sessionScore = 0, sessionMax = 0;
 
                 for (let paper = 1; paper <= paperCount; paper++) {
                     totalCount++;
@@ -725,55 +980,188 @@
             document.getElementById('bestSession').textContent = bestSession;
         }
 
+        function renderDashboard() {
+            const subjectGrid = document.getElementById('subjectGrid');
+            const weakAreasContainer = document.getElementById('weakAreasContainer');
+
+            subjectGrid.innerHTML = '';
+            weakAreasContainer.innerHTML = '';
+
+            const subjectData = {};
+            let allProgress = [];
+            let weakAreas = [];
+
+            subjects.forEach(subject => {
+                const sessions = sessionsBySubject[subject];
+                const paperCount = papersBySubject[subject];
+                let totalScore = 0, totalMax = 0, completedPapers = 0;
+
+                sessions.forEach(session => {
+                    for (let paper = 1; paper <= paperCount; paper++) {
+                        const data = getPaperData(subject, session.year, session.period, paper);
+                        if (data.score !== null) {
+                            totalScore += data.score;
+                            totalMax += data.max;
+                            completedPapers++;
+                            const percent = Math.round((data.score / data.max) * 100);
+                            allProgress.push({ subject, year: session.year, percent });
+
+                            if (percent < 70) {
+                                weakAreas.push({ subject, session: `${session.year} ${session.period}`, paper, percent });
+                            }
+                        }
+                    }
+                });
+
+                const avgPercent = totalMax > 0 ? Math.round((totalScore / totalMax) * 100) : 0;
+                subjectData[subject] = { avgPercent, completedPapers, totalPapers: sessions.length * paperCount };
+
+                const card = document.createElement('div');
+                card.className = 'subject-card';
+                card.innerHTML = `
+                    <h3>${subject}</h3>
+                    <div class="subject-stats">
+                        <div class="stat-row">
+                            <span>Average Score:</span>
+                            <span class="stat-value">${avgPercent}%</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>Papers Done:</span>
+                            <span class="stat-value">${completedPapers}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>Total Papers:</span>
+                            <span class="stat-value">${subjectData[subject].totalPapers}</span>
+                        </div>
+                    </div>
+                `;
+                subjectGrid.appendChild(card);
+            });
+
+            // Progress Chart
+            if (progressChart) progressChart.destroy();
+            const progressCtx = document.getElementById('progressChart').getContext('2d');
+            const progressYears = [...new Set(allProgress.map(p => p.year))].sort();
+            const progressDatasets = subjects.map(subject => ({
+                label: subject,
+                data: progressYears.map(year => {
+                    const dataPoints = allProgress.filter(p => p.subject === subject && p.year === year);
+                    return dataPoints.length > 0 ? Math.round(dataPoints.reduce((a, b) => a + b.percent, 0) / dataPoints.length) : null;
+                }),
+                borderWidth: 2,
+                tension: 0.4
+            }));
+
+            progressChart = new Chart(progressCtx, {
+                type: 'line',
+                data: { labels: progressYears, datasets: progressDatasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } },
+                    scales: { y: { beginAtZero: true, max: 100 } }
+                }
+            });
+
+            // Comparison Chart
+            if (comparisonChart) comparisonChart.destroy();
+            const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+            const comparisonChart_new = new Chart(comparisonCtx, {
+                type: 'bar',
+                data: {
+                    labels: subjects,
+                    datasets: [{
+                        label: 'Average Score %',
+                        data: subjects.map(s => subjectData[s].avgPercent),
+                        backgroundColor: '#667eea',
+                        borderColor: '#1F4E78',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, max: 100 } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+            comparisonChart = comparisonChart_new;
+
+            // Weak Areas
+            if (weakAreas.length === 0) {
+                weakAreasContainer.innerHTML = '<p style="color: var(--text-secondary);">Great job! No weak areas identified. 🎉</p>';
+            } else {
+                weakAreas.sort((a, b) => a.percent - b.percent);
+                let html = '<table style="width: 100%; text-align: left;">';
+                html += '<tr style="border-bottom: 2px solid var(--border-color); padding: 10px 0;"><th>Subject</th><th>Session</th><th>Paper</th><th>Score</th></tr>';
+                weakAreas.slice(0, 10).forEach(item => {
+                    html += `<tr style="border-bottom: 1px solid var(--border-color); padding: 10px 0;">
+                        <td>${item.subject}</td>
+                        <td>${item.session}</td>
+                        <td>${item.paper}</td>
+                        <td><strong style="color: #dc3545;">${item.percent}%</strong></td>
+                    </tr>`;
+                });
+                html += '</table>';
+                weakAreasContainer.innerHTML = html;
+            }
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tabName = e.target.dataset.tab;
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                e.target.classList.add('active');
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+                if (tabName === 'dashboard') renderDashboard();
+            });
+        });
+
+        // Dark Mode
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            document.getElementById('themeToggle').textContent = document.body.classList.contains('dark-mode') ? '☀️ Light Mode' : '🌙 Dark Mode';
+        });
+
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('themeToggle').textContent = '☀️ Light Mode';
+        }
+
+        // Clear all
         document.getElementById('clearBtn').addEventListener('click', () => {
             if (confirm(`Clear all data for ${currentSubject}?`)) {
                 const sessions = sessionsBySubject[currentSubject];
                 const paperCount = papersBySubject[currentSubject];
                 sessions.forEach(session => {
                     for (let paper = 1; paper <= paperCount; paper++) {
-                        localStorage.removeItem(getStorageKey(currentSubject, session.year, session.period, paper, 'score'));
-                        localStorage.removeItem(getStorageKey(currentSubject, session.year, session.period, paper, 'max'));
-                        localStorage.removeItem(getStorageKey(currentSubject, session.year, session.period, paper, 'completed'));
+                        ['score', 'max', 'difficulty', 'notes'].forEach(field => {
+                            localStorage.removeItem(getStorageKey(currentSubject, session.year, session.period, paper, field));
+                        });
                     }
                 });
                 renderContent();
+                renderDashboard();
             }
         });
 
+        // Export PDF
         document.getElementById('exportBtn').addEventListener('click', () => {
-            const sessions = sessionsBySubject[currentSubject];
-            const paperCount = papersBySubject[currentSubject];
-            let data = `GCSE Past Paper Scores - ${currentSubject}\n\n`;
-
-            sessions.forEach(session => {
-                data += `${session.year} ${session.period}\n`;
-                let sessionTotal = 0, sessionMax = 0;
-
-                for (let paper = 1; paper <= paperCount; paper++) {
-                    const paperData = getPaperData(currentSubject, session.year, session.period, paper);
-                    if (paperData.score !== null) {
-                        data += `  Paper ${paper}: ${paperData.score}/${paperData.max}\n`;
-                        sessionTotal += paperData.score;
-                        sessionMax += paperData.max;
-                    }
-                }
-
-                if (sessionMax > 0) {
-                    const percent = Math.round((sessionTotal / sessionMax) * 100);
-                    data += `  Total: ${sessionTotal}/${sessionMax} (${percent}%)\n`;
-                }
-                data += '\n';
-            });
-
-            const blob = new Blob([data], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `GCSE_${currentSubject.replace(/\s+/g, '_')}_Scores.txt`;
-            a.click();
-            URL.revokeObjectURL(url);
+            const element = document.getElementById('tracker-tab');
+            const opt = { margin: 10, filename: `GCSE_${currentSubject.replace(/\s+/g, '_')}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' } };
+            html2pdf().set(opt).from(element).save();
         });
 
+        document.getElementById('exportDashboardBtn').addEventListener('click', () => {
+            const element = document.getElementById('dashboard-tab');
+            const opt = { margin: 10, filename: 'GCSE_Dashboard.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' } };
+            html2pdf().set(opt).from(element).save();
+        });
+
+        // Initialize
         initializeSidebar();
         renderContent();
     </script>
