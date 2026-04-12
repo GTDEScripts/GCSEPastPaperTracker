@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "PastPaperTracker",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8000", "--directory", "C:\\Users\\ladhu\\OneDrive\\Documents\\PastPaperTracker"],
+      "port": 8000
+    }
+  ]
+}

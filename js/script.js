@@ -537,9 +537,9 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 }
 
                 totalPapers += sessions.length * paperCount;
-                completedPapers += completedPapers || 0;
-                totalScore += totalScore || 0;
-                totalMax += totalMax || 0;
+                completedPapers += subjectData[subject].completedPapers;
+                totalScore += subjectData[subject].totalScore;
+                totalMax += subjectData[subject].totalMax;
 
                 const card = document.createElement('div');
                 card.className = 'subject-card';
@@ -613,7 +613,6 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             comparisonChart = comparisonChart_new;
 
             // Render Statistics Cards
-            const statsGrid = document.getElementById('statsGrid');
             const overallPercent = totalMax > 0 ? Math.round((totalScore / totalMax) * 100) : 0;
             const improvementRate = totalMax > 0 ? ((totalScore / totalMax) * 100).toFixed(1) : 0;
 
@@ -637,7 +636,6 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             });
 
             // Render Heatmap
-            const heatmapContainer = document.getElementById('heatmapContainer');
             let heatmapHTML = '<h3>Performance by Subject & Year</h3><table class="heatmap-table"><thead><tr><th>Subject</th>';
 
             // Get all unique years
