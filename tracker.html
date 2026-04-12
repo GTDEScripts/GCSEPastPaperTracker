@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE Past Paper Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1F4E78 0%, #2d5a96 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #f8f9fa;
+            border-right: 2px solid #e9ecef;
+            overflow-y: auto;
+            padding: 20px;
+            max-height: calc(100vh - 200px);
+        }
+
+        .sidebar h3 {
+            color: #1F4E78;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subject-btn {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 8px;
+            border: 2px solid transparent;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            text-align: left;
+            transition: all 0.3s ease;
+            color: #333;
+        }
+
+        .subject-btn:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+        }
+
+        .subject-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            font-weight: 600;
+        }
+
+        .content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            max-height: calc(100vh - 200px);
+        }
+
+        .subject-title {
+            color: #1F4E78;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .progress-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .progress-item h4 {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .progress-item p {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .sessions-grid {
+            display: grid;
+            gap: 25px;
+        }
+
+        .session {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+
+        .session-title {
+            color: #1F4E78;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .session-total {
+            background: #1F4E78;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.95em;
+        }
+
+        .papers {
+            display: grid;
+            gap: 15px;
+        }
+
+        .paper {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .paper-label {
+            font-weight: 600;
+            color: #1F4E78;
+            min-width: 100px;
+        }
+
+        .paper-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .paper-input input {
+            width: 60px;
+            padding: 8px;
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: 600;
+        }
+
+        .paper-input input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .paper-input span {
+            color: #666;
+            font-size: 0.95em;
+            min-width: 40px;
+        }
+
+        .percentage {
+            background: #e3f2fd;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: 600;
+            color: #1F4E78;
+            min-width: 70px;
+            text-align: center;
+        }
+
+        .max-marks-input {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            font-size: 0.85em;
+        }
+
+        .max-marks-input input {
+            width: 50px;
+            padding: 5px;
+            border: 1px solid #e9ecef;
+            border-radius: 3px;
+        }
+
+        .clear-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .clear-btn:hover {
+            background: #c82333;
+        }
+
+        .export-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+            margin-left: 10px;
+        }
+
+        .export-btn:hover {
+            background: #218838;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 2px solid #e9ecef;
+                max-height: none;
+            }
+
+            .paper {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 GCSE Past Paper Tracker</h1>
+            <p>Track progress & scores across all subjects</p>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <h3>Subjects</h3>
+                <div id="subjectList"></div>
+            </div>
+
+            <div class="content">
+                <h2 class="subject-title" id="subjectTitle">Mathematics</h2>
+
+                <div class="progress-section">
+                    <div class="progress-grid">
+                        <div class="progress-item">
+                            <h4>Papers Done</h4>
+                            <p id="completedCount">0</p>
+                        </div>
+                        <div class="progress-item">
+                            <h4>Total Papers</h4>
+                            <p id="totalCount">0</p>
+                        </div>
+                        <div class="progress-item">
+                            <h4>Avg Score</h4>
+                            <p id="avgScore">-</p>
+                        </div>
+                        <div class="progress-item">
+                            <h4>Best Session</h4>
+                            <p id="bestSession">-</p>
+                        </div>
+                    </div>
+                    <button class="clear-btn" id="clearBtn">Clear All</button>
+                    <button class="export-btn" id="exportBtn">Export Data</button>
+                </div>
+
+                <div class="sessions-grid" id="sessionsContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const subjects = [
+            'Mathematics',
+            'English Language',
+            'English Literature',
+            'Biology',
+            'Chemistry',
+            'Physics',
+            'History',
+            'Geography',
+            'Computer Science'
+        ];
+
+        const sessionsBySubject = {
+            'Mathematics': [
+                { year: '2017', period: 'June' },
+                { year: '2017', period: 'November' },
+                { year: '2019', period: 'June' },
+                { year: '2019', period: 'November' },
+                { year: '2020', period: 'Lockdown' },
+                { year: '2022', period: 'June' },
+                { year: '2022', period: 'November' },
+                { year: '2023', period: 'June' },
+                { year: '2023', period: 'November' },
+                { year: '2024', period: 'May' },
+                { year: '2024', period: 'November' }
+            ],
+            'English Language': [
+                { year: '2017', period: 'June' },
+                { year: '2017', period: 'November' },
+                { year: '2019', period: 'June' },
+                { year: '2019', period: 'November' },
+                { year: '2020', period: 'Lockdown' },
+                { year: '2022', period: 'June' },
+                { year: '2022', period: 'November' },
+                { year: '2023', period: 'June' },
+                { year: '2023', period: 'November' },
+                { year: '2024', period: 'May' },
+                { year: '2024', period: 'November' }
+            ],
+            'English Literature': [
+                { year: '2017', period: 'June' },
+                { year: '2017', period: 'November' },
+                { year: '2019', period: 'June' },
+                { year: '2019', period: 'November' },
+                { year: '2020', period: 'Lockdown' },
+                { year: '2022', period: 'June' },
+                { year: '2022', period: 'November' },
+                { year: '2023', period: 'June' },
+                { year: '2023', period: 'November' },
+                { year: '2024', period: 'May' },
+                { year: '2024', period: 'November' }
+            ],
+            'Biology': [
+                { year: '2017', period: 'June' },
+                { year: '2019', period: 'June' },
+                { year: '2020', period: 'Lockdown' },
+                { year: '2022', period: 'June' },
+                { year: '2023', period: 'June' },
+                { year: '2024', period: 'May' }
+            ],
+            'Chemistry': [
+                { year: '2017', period: 'June' },
+                { year: '2019', period: 'June' },
+                { year: '2020', period: 'Lockdown' },
+                { year: '2022', period: 'June' },
+                { year: '2023', period: 'June' },
+                { year: '2024', period: 'May' }
+            ],
+            'Physics': [
+                { year: '2017', period: 'June' },
+                { year: '2019', period: 'June' },
+                { year: '2020', period: 'Lockdown' },
+                { year: '2022', period: 'June' },
+                { year: '2023', period: 'June' },
+                { year: '2024', period: 'May' }
+            ],
+            'History': [
+                { year: '2017', period: 'June' },
+                { year: '2019', period: 'June' },
+                { year: '2020', period: 'Lockdown' },
+                { year: '2022', period: 'June' },
+                { year: '2023', period: 'June' },
+                { year: '2024', period: 'May' }
+            ],
+            'Geography': [
+                { year: '2017', period: 'June' },
+                { year: '2019', period: 'June' },
+                { year: '2020', period: 'Lockdown' },
+                { year: '2022', period: 'June' },
+                { year: '2023', period: 'June' },
+                { year: '2024', period: 'May' }
+            ],
+            'Computer Science': [
+                { year: '2017', period: 'June' },
+                { year: '2019', period: 'June' },
+                { year: '2020', period: 'Lockdown' },
+                { year: '2022', period: 'June' },
+                { year: '2023', period: 'June' },
+                { year: '2024', period: 'May' }
+            ]
+        };
+
+        const papersBySubject = {
+            'Mathematics': 3,
+            'English Language': 2,
+            'English Literature': 2,
+            'Biology': 2,
+            'Chemistry': 2,
+            'Physics': 2,
+            'History': 3,
+            'Geography': 3,
+            'Computer Science': 2
+        };
+
+        const defaultMaxMarks = {
+            'Mathematics': [80, 80, 80],
+            'English Language': [80, 80],
+            'English Literature': [64, 96],
+            'Biology': [100, 100],
+            'Chemistry': [100, 100],
+            'Physics': [100, 100],
+            'History': [96, 96, 96],
+            'Geography': [88, 88, 76],
+            'Computer Science': [80, 80]
+        };
+
+        let currentSubject = 'Mathematics';
+
+        function getStorageKey(subject, year, period, paper, field) {
+            return `gcse_${subject}_${year}_${period}_paper${paper}_${field}`;
+        }
+
+        function getPaperData(subject, year, period, paper) {
+            const scoreKey = getStorageKey(subject, year, period, paper, 'score');
+            const maxKey = getStorageKey(subject, year, period, paper, 'max');
+            const completedKey = getStorageKey(subject, year, period, paper, 'completed');
+
+            const defaultMax = defaultMaxMarks[subject][paper - 1];
+
+            return {
+                score: localStorage.getItem(scoreKey) ? parseInt(localStorage.getItem(scoreKey)) : null,
+                max: localStorage.getItem(maxKey) ? parseInt(localStorage.getItem(maxKey)) : defaultMax,
+                completed: localStorage.getItem(completedKey) === 'true'
+            };
+        }
+
+        function savePaperData(subject, year, period, paper, score, max) {
+            const scoreKey = getStorageKey(subject, year, period, paper, 'score');
+            const maxKey = getStorageKey(subject, year, period, paper, 'max');
+            const completedKey = getStorageKey(subject, year, period, paper, 'completed');
+
+            if (score !== null && score !== '') {
+                localStorage.setItem(scoreKey, score);
+                localStorage.setItem(completedKey, 'true');
+            } else {
+                localStorage.removeItem(scoreKey);
+                localStorage.removeItem(completedKey);
+            }
+            localStorage.setItem(maxKey, max);
+        }
+
+        function initializeSidebar() {
+            const subjectList = document.getElementById('subjectList');
+            subjects.forEach(subject => {
+                const btn = document.createElement('button');
+                btn.className = 'subject-btn' + (subject === currentSubject ? ' active' : '');
+                btn.textContent = subject;
+                btn.onclick = () => selectSubject(subject);
+                subjectList.appendChild(btn);
+            });
+        }
+
+        function selectSubject(subject) {
+            currentSubject = subject;
+            document.querySelectorAll('.subject-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent === subject);
+            });
+            renderContent();
+        }
+
+        function renderContent() {
+            document.getElementById('subjectTitle').textContent = currentSubject;
+            const container = document.getElementById('sessionsContainer');
+            container.innerHTML = '';
+
+            const sessions = sessionsBySubject[currentSubject];
+            const paperCount = papersBySubject[currentSubject];
+
+            sessions.forEach(session => {
+                const sessionDiv = document.createElement('div');
+                sessionDiv.className = 'session';
+
+                const sessionHeader = document.createElement('div');
+                sessionHeader.className = 'session-header';
+
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'session-title';
+                titleDiv.textContent = `${session.year} ${session.period}`;
+
+                const totalDiv = document.createElement('div');
+                totalDiv.className = 'session-total';
+                totalDiv.id = `total_${session.year}_${session.period}`;
+                totalDiv.textContent = '0 / 0';
+
+                sessionHeader.appendChild(titleDiv);
+                sessionHeader.appendChild(totalDiv);
+                sessionDiv.appendChild(sessionHeader);
+
+                const papersDiv = document.createElement('div');
+                papersDiv.className = 'papers';
+
+                for (let paper = 1; paper <= paperCount; paper++) {
+                    const paperData = getPaperData(currentSubject, session.year, session.period, paper);
+
+                    const paperDiv = document.createElement('div');
+                    paperDiv.className = 'paper';
+
+                    const labelDiv = document.createElement('div');
+                    labelDiv.className = 'paper-label';
+                    labelDiv.textContent = `Paper ${paper}`;
+
+                    const scoreInputDiv = document.createElement('div');
+                    scoreInputDiv.className = 'paper-input';
+
+                    const scoreInput = document.createElement('input');
+                    scoreInput.type = 'number';
+                    scoreInput.placeholder = '0';
+                    scoreInput.value = paperData.score || '';
+                    scoreInput.min = '0';
+
+                    scoreInput.addEventListener('input', (e) => {
+                        updateSessionTotal(session.year, session.period);
+                        updateProgress();
+                    });
+
+                    const maxInput = document.createElement('input');
+                    maxInput.type = 'number';
+                    maxInput.value = paperData.max;
+                    maxInput.min = '1';
+                    maxInput.style.width = '60px';
+
+                    maxInput.addEventListener('change', (e) => {
+                        updateSessionTotal(session.year, session.period);
+                        updateProgress();
+                    });
+
+                    scoreInput.addEventListener('change', (e) => {
+                        savePaperData(currentSubject, session.year, session.period, paper, e.target.value || null, maxInput.value);
+                        updateSessionTotal(session.year, session.period);
+                        updateProgress();
+                    });
+
+                    maxInput.addEventListener('change', (e) => {
+                        savePaperData(currentSubject, session.year, session.period, paper, scoreInput.value || null, e.target.value);
+                        updateSessionTotal(session.year, session.period);
+                        updateProgress();
+                    });
+
+                    scoreInputDiv.appendChild(scoreInput);
+                    scoreInputDiv.appendChild(document.createTextNode(' / '));
+                    scoreInputDiv.appendChild(maxInput);
+
+                    const percentDiv = document.createElement('div');
+                    percentDiv.className = 'percentage';
+                    percentDiv.id = `percent_${session.year}_${session.period}_${paper}`;
+
+                    if (paperData.score !== null) {
+                        const percent = Math.round((paperData.score / paperData.max) * 100);
+                        percentDiv.textContent = percent + '%';
+                    } else {
+                        percentDiv.textContent = '-';
+                    }
+
+                    paperDiv.appendChild(labelDiv);
+                    paperDiv.appendChild(scoreInputDiv);
+                    paperDiv.appendChild(percentDiv);
+                    papersDiv.appendChild(paperDiv);
+                }
+
+                sessionDiv.appendChild(papersDiv);
+                container.appendChild(sessionDiv);
+            });
+
+            updateProgress();
+            sessions.forEach(session => {
+                updateSessionTotal(session.year, session.period);
+            });
+        }
+
+        function updateSessionTotal(year, period) {
+            const sessions = sessionsBySubject[currentSubject];
+            const paperCount = papersBySubject[currentSubject];
+            const session = sessions.find(s => s.year === year && s.period === period);
+
+            if (!session) return;
+
+            let totalScore = 0;
+            let totalMax = 0;
+            let completedCount = 0;
+
+            for (let paper = 1; paper <= paperCount; paper++) {
+                const data = getPaperData(currentSubject, year, period, paper);
+                if (data.score !== null) {
+                    totalScore += data.score;
+                    totalMax += data.max;
+                    completedCount++;
+
+                    const percentDiv = document.getElementById(`percent_${year}_${period}_${paper}`);
+                    const percent = Math.round((data.score / data.max) * 100);
+                    percentDiv.textContent = percent + '%';
+                }
+            }
+
+            const totalDiv = document.getElementById(`total_${year}_${period}`);
+            if (totalMax > 0) {
+                const totalPercent = Math.round((totalScore / totalMax) * 100);
+                totalDiv.textContent = `${totalScore} / ${totalMax} (${totalPercent}%)`;
+            } else {
+                totalDiv.textContent = '0 / 0';
+            }
+        }
+
+        function updateProgress() {
+            const sessions = sessionsBySubject[currentSubject];
+            const paperCount = papersBySubject[currentSubject];
+
+            let completedCount = 0;
+            let totalCount = 0;
+            let totalScore = 0;
+            let totalMax = 0;
+            let bestPercent = 0;
+            let bestSession = '-';
+
+            sessions.forEach(session => {
+                let sessionScore = 0;
+                let sessionMax = 0;
+
+                for (let paper = 1; paper <= paperCount; paper++) {
+                    totalCount++;
+                    const data = getPaperData(currentSubject, session.year, session.period, paper);
+                    if (data.score !== null) {
+                        completedCount++;
+                        totalScore += data.score;
+                        totalMax += data.max;
+                        sessionScore += data.score;
+                        sessionMax += data.max;
+                    }
+                }
+
+                if (sessionMax > 0) {
+                    const sessionPercent = Math.round((sessionScore / sessionMax) * 100);
+                    if (sessionPercent > bestPercent) {
+                        bestPercent = sessionPercent;
+                        bestSession = `${session.year} ${session.period}`;
+                    }
+                }
+            });
+
+            const avgPercent = totalMax > 0 ? Math.round((totalScore / totalMax) * 100) : '-';
+
+            document.getElementById('completedCount').textContent = completedCount;
+            document.getElementById('totalCount').textContent = totalCount;
+            document.getElementById('avgScore').textContent = totalMax > 0 ? avgPercent + '%' : '-';
+            document.getElementById('bestSession').textContent = bestSession;
+        }
+
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            if (confirm(`Clear all data for ${currentSubject}?`)) {
+                const sessions = sessionsBySubject[currentSubject];
+                const paperCount = papersBySubject[currentSubject];
+                sessions.forEach(session => {
+                    for (let paper = 1; paper <= paperCount; paper++) {
+                        localStorage.removeItem(getStorageKey(currentSubject, session.year, session.period, paper, 'score'));
+                        localStorage.removeItem(getStorageKey(currentSubject, session.year, session.period, paper, 'max'));
+                        localStorage.removeItem(getStorageKey(currentSubject, session.year, session.period, paper, 'completed'));
+                    }
+                });
+                renderContent();
+            }
+        });
+
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            const sessions = sessionsBySubject[currentSubject];
+            const paperCount = papersBySubject[currentSubject];
+            let data = `GCSE Past Paper Scores - ${currentSubject}\n\n`;
+
+            sessions.forEach(session => {
+                data += `${session.year} ${session.period}\n`;
+                let sessionTotal = 0, sessionMax = 0;
+
+                for (let paper = 1; paper <= paperCount; paper++) {
+                    const paperData = getPaperData(currentSubject, session.year, session.period, paper);
+                    if (paperData.score !== null) {
+                        data += `  Paper ${paper}: ${paperData.score}/${paperData.max}\n`;
+                        sessionTotal += paperData.score;
+                        sessionMax += paperData.max;
+                    }
+                }
+
+                if (sessionMax > 0) {
+                    const percent = Math.round((sessionTotal / sessionMax) * 100);
+                    data += `  Total: ${sessionTotal}/${sessionMax} (${percent}%)\n`;
+                }
+                data += '\n';
+            });
+
+            const blob = new Blob([data], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `GCSE_${currentSubject.replace(/\s+/g, '_')}_Scores.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        initializeSidebar();
+        renderContent();
+    </script>
+</body>
+</html>
