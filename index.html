@@ -60,6 +60,7 @@
                         </div>
                         <div class="button-group">
                             <button class="btn btn-info" id="viewToggleBtn">📋 Grid View</button>
+                            <button class="btn btn-success" id="gradeCalcBtn" style="display: none;">📊 Grade Calculator</button>
                             <button class="btn btn-success" id="exportBtn">📥 Export PDF</button>
                             <button class="btn btn-secondary" id="clearBtn">🗑️ Clear All</button>
                         </div>
@@ -214,6 +215,47 @@
                     <span style="color: var(--text-secondary); font-size: 0.9em;">Trend</span>
                     <strong style="display: block; font-size: 1.1em;">-</strong>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grade Calculator Modal -->
+    <div class="modal" id="gradeCalculatorModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>📊 EDEXCEL GCSE Mathematics Grade Calculator</h2>
+                <button class="close-btn" onclick="closeGradeCalculatorModal()">&times;</button>
+            </div>
+
+            <div style="background: var(--bg-secondary); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <p style="margin: 0; font-size: 0.9em; color: var(--text-secondary);">Grade boundaries are based on the most recent EDEXCEL exam series (June 2025)</p>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                <div style="flex: 1;">
+                    <label for="examSeriesSelect" style="display: block; margin-bottom: 8px; font-weight: 500;">Exam Series</label>
+                    <select id="examSeriesSelect" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary);">
+                    </select>
+                </div>
+                <div style="flex: 1;">
+                    <label for="scoreInput" style="display: block; margin-bottom: 8px; font-weight: 500;">Your Score</label>
+                    <input type="number" id="scoreInput" min="0" max="240" placeholder="e.g., 195" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); box-sizing: border-box;">
+                </div>
+            </div>
+
+            <div style="background: var(--bg-secondary); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <p style="color: var(--text-secondary); margin: 0 0 10px 0; font-size: 0.9em;">Your Grade</p>
+                    <div id="gradeResult" style="font-size: 3em; font-weight: bold; color: var(--accent); min-height: 60px; display: flex; align-items: center; justify-content: center;">-</div>
+                    <p id="gradePercentage" style="color: var(--text-secondary); margin: 10px 0 0 0; font-size: 0.95em;">-</p>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;" id="gradeGridContainer"></div>
+
+            <div style="background: var(--bg-secondary); padding: 15px; border-radius: 8px; font-size: 0.85em; color: var(--text-secondary);">
+                <p style="margin: 0 0 10px 0;"><strong>Grade Boundaries (Max: 240):</strong></p>
+                <div id="boundariesDisplay" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;"></div>
             </div>
         </div>
     </div>

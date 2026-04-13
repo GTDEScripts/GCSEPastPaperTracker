@@ -94,6 +94,25 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             'Business': [80, 80]
         };
 
+        // EDEXCEL GCSE Mathematics Grade Boundaries (out of 240)
+        const edexcelMathBoundaries = {
+            'June 2025': { 9: 217, 8: 186, 7: 156, 6: 121, 5: 87, 4: 53, 3: 36, U: 0 },
+            'November 2024': { 9: 200, 8: 170, 7: 140, 6: 107, 5: 75, 4: 43, 3: 27, U: 0 },
+            'June 2024': { 9: 197, 8: 167, 7: 137, 6: 105, 5: 73, 4: 42, 3: 26, U: 0 },
+            'November 2023': { 9: 203, 8: 174, 7: 145, 6: 112, 5: 79, 4: 47, 3: 31, U: 0 },
+            'June 2023': { 9: 203, 8: 174, 7: 145, 6: 112, 5: 79, 4: 47, 3: 31, U: 0 },
+            'November 2022': { 9: 194, 8: 165, 7: 137, 6: 104, 5: 71, 4: 38, 3: 21, U: 0 },
+            'June 2022': { 9: 194, 8: 165, 7: 137, 6: 104, 5: 71, 4: 38, 3: 21, U: 0 },
+            'November 2021': { 9: 187, 8: 154, 7: 122, 6: 93, 5: 65, 4: 37, 3: 23, U: 0 },
+            'November 2020': { 9: 189, 8: 157, 7: 126, 6: 96, 5: 66, 4: 37, 3: 22, U: 0 },
+            'November 2019': { 9: 197, 8: 165, 7: 133, 6: 103, 5: 73, 4: 43, 3: 28, U: 0 },
+            'June 2019': { 9: 198, 8: 167, 7: 137, 6: 108, 5: 80, 4: 52, 3: 38, U: 0 },
+            'November 2018': { 9: 194, 8: 159, 7: 125, 6: 95, 5: 66, 4: 37, 3: 22, U: 0 },
+            'June 2018': { 9: 202, 8: 170, 7: 139, 6: 109, 5: 79, 4: 50, 3: 35, U: 0 },
+            'November 2017': { 9: 189, 8: 150, 7: 112, 6: 85, 5: 58, 4: 32, 3: 19, U: 0 },
+            'June 2017': { 9: 190, 8: 157, 7: 124, 6: 96, 5: 68, 4: 41, 3: 27, U: 0 }
+        };
+
         let currentSubject = 'Mathematics';
         let currentNoteKey = null;
         let progressChart = null;
@@ -411,6 +430,109 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             localStorage.setItem(diffKey, difficulty);
         }
 
+        // Grade Calculator Functions
+        function openGradeCalculatorModal() {
+            document.getElementById('gradeCalculatorModal').classList.add('active');
+            initGradeCalculator();
+        }
+
+        function closeGradeCalculatorModal() {
+            document.getElementById('gradeCalculatorModal').classList.remove('active');
+        }
+
+        function initGradeCalculator() {
+            const seriesSelect = document.getElementById('examSeriesSelect');
+            seriesSelect.innerHTML = '';
+            Object.keys(edexcelMathBoundaries).reverse().forEach(series => {
+                const option = document.createElement('option');
+                option.value = series;
+                option.textContent = series;
+                seriesSelect.appendChild(option);
+            });
+
+            updateGradeCalculator();
+
+            document.getElementById('examSeriesSelect').addEventListener('change', updateGradeCalculator);
+            document.getElementById('scoreInput').addEventListener('input', updateGradeCalculator);
+        }
+
+        function updateGradeCalculator() {
+            const series = document.getElementById('examSeriesSelect').value;
+            const score = parseInt(document.getElementById('scoreInput').value) || 0;
+            const boundaries = edexcelMathBoundaries[series];
+
+            // Calculate grade
+            let grade = 'U';
+            if (score >= boundaries[9]) grade = '9';
+            else if (score >= boundaries[8]) grade = '8';
+            else if (score >= boundaries[7]) grade = '7';
+            else if (score >= boundaries[6]) grade = '6';
+            else if (score >= boundaries[5]) grade = '5';
+            else if (score >= boundaries[4]) grade = '4';
+            else if (score >= boundaries[3]) grade = '3';
+
+            // Get grade color
+            const gradeColors = { 9: '#10b981', 8: '#0891b2', 7: '#3b82f6', 6: '#f59e0b', 5: '#f97316', 4: '#ef4444', 3: '#dc2626', U: '#6b7280' };
+            const percentage = ((score / 240) * 100).toFixed(1);
+
+            // Update display
+            const gradeResult = document.getElementById('gradeResult');
+            gradeResult.textContent = grade;
+            gradeResult.style.color = gradeColors[grade];
+            document.getElementById('gradePercentage').textContent = `${score}/240 (${percentage}%)`;
+
+            // Display grade grid
+            const gridContainer = document.getElementById('gradeGridContainer');
+            gridContainer.innerHTML = '';
+            const grades = ['9', '8', '7', '6', '5', '4', '3', 'U'];
+            grades.forEach(g => {
+                const cell = document.createElement('div');
+                cell.style.cssText = `
+                    padding: 12px;
+                    background: ${grade === g ? gradeColors[g] + '20' : 'var(--bg-primary)'};
+                    border: 2px solid ${grade === g ? gradeColors[g] : 'var(--border-color)'};
+                    border-radius: 8px;
+                    text-align: center;
+                    cursor: default;
+                `;
+                cell.innerHTML = `<div style="font-size: 1.5em; font-weight: bold; color: ${gradeColors[g]}; margin-bottom: 5px;">${g}</div><div style="font-size: 0.85em; color: var(--text-secondary);">${boundaries[g]}</div>`;
+                gridContainer.appendChild(cell);
+            });
+
+            // Display boundaries
+            const boundariesDisplay = document.getElementById('boundariesDisplay');
+            boundariesDisplay.innerHTML = '';
+            grades.forEach(g => {
+                const div = document.createElement('div');
+                const isMet = score >= boundaries[g];
+                div.innerHTML = `<span style="color: ${isMet ? gradeColors[g] : 'var(--text-secondary)'}">${isMet ? '✓' : '○'} Grade ${g}: ${boundaries[g]}</span>`;
+                boundariesDisplay.appendChild(div);
+            });
+        }
+
+        // Calculate grade for a session (Mathematics only)
+        function calculateSessionGrade(totalScore, maxScore) {
+            if (currentSubject !== 'Mathematics' || totalScore === null || totalScore === '' || maxScore === 0) {
+                return null;
+            }
+
+            // Get the most recent exam series boundaries
+            const boundaries = edexcelMathBoundaries['June 2025'];
+
+            if (boundaries[9] === 0) return null; // No boundaries available
+
+            let grade = 'U';
+            if (totalScore >= boundaries[9]) grade = '9';
+            else if (totalScore >= boundaries[8]) grade = '8';
+            else if (totalScore >= boundaries[7]) grade = '7';
+            else if (totalScore >= boundaries[6]) grade = '6';
+            else if (totalScore >= boundaries[5]) grade = '5';
+            else if (totalScore >= boundaries[4]) grade = '4';
+            else if (totalScore >= boundaries[3]) grade = '3';
+
+            return grade;
+        }
+
         function openNotesModal(subject, year, period, paper) {
             currentNoteKey = { subject, year, period, paper };
             const data = getPaperData(subject, year, period, paper);
@@ -456,7 +578,9 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
         }
 
         function renderContent() {
-            document.getElementById('subjectTitle').textContent = currentSubject;
+            const titleText = currentSubject === 'Mathematics' ? 'EDEXCEL GCSE Mathematics' : currentSubject;
+            document.getElementById('subjectTitle').textContent = titleText;
+            document.getElementById('gradeCalcBtn').style.display = currentSubject === 'Mathematics' ? 'inline-block' : 'none';
             const container = document.getElementById('sessionsContainer');
             container.innerHTML = '';
 
@@ -474,13 +598,24 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 titleDiv.className = 'session-title';
                 titleDiv.textContent = `${session.year} ${session.period}`;
 
+                const scoreGradeDiv = document.createElement('div');
+                scoreGradeDiv.style.cssText = 'display: flex; gap: 20px; align-items: center;';
+
                 const totalDiv = document.createElement('div');
                 totalDiv.className = 'session-total';
                 totalDiv.id = `total_${session.year}_${session.period}`;
                 totalDiv.textContent = '0 / 0';
 
+                const gradeDiv = document.createElement('div');
+                gradeDiv.id = `grade_${session.year}_${session.period}`;
+                gradeDiv.style.cssText = 'font-weight: bold; min-width: 60px; text-align: right;';
+                gradeDiv.textContent = '';
+
+                scoreGradeDiv.appendChild(totalDiv);
+                scoreGradeDiv.appendChild(gradeDiv);
+
                 sessionHeader.appendChild(titleDiv);
-                sessionHeader.appendChild(totalDiv);
+                sessionHeader.appendChild(scoreGradeDiv);
                 sessionDiv.appendChild(sessionHeader);
 
                 const papersDiv = document.createElement('div');
@@ -617,6 +752,19 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 totalDiv.textContent = `${totalScore} / ${totalMax} (${totalPercent}%)`;
             } else {
                 totalDiv.textContent = `0 / ${maxPossible}`;
+            }
+
+            // Update grade display for Mathematics
+            const gradeDiv = document.getElementById(`grade_${year}_${period}`);
+            if (gradeDiv && currentSubject === 'Mathematics') {
+                const grade = calculateSessionGrade(totalScore, totalMax);
+                if (grade) {
+                    const gradeColors = { 9: '#10b981', 8: '#0891b2', 7: '#3b82f6', 6: '#f59e0b', 5: '#f97316', 4: '#ef4444', 3: '#dc2626', U: '#6b7280' };
+                    gradeDiv.textContent = `Grade: ${grade}`;
+                    gradeDiv.style.color = gradeColors[grade];
+                } else {
+                    gradeDiv.textContent = '';
+                }
             }
         }
 
@@ -1027,6 +1175,9 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 renderDashboard();
             }
         });
+
+        // Grade Calculator
+        document.getElementById('gradeCalcBtn').addEventListener('click', openGradeCalculatorModal);
 
         // Export PDF
         document.getElementById('exportBtn').addEventListener('click', () => {
