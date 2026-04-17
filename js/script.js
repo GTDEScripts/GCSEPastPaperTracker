@@ -587,7 +587,30 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById('tracker-tab').classList.add('active');
             document.querySelector('[data-tab="tracker"]').classList.add('active');
+            closeMobileSidebar();
             renderContent();
+        }
+
+        function closeMobileSidebar() {
+            if (window.innerWidth > 768) return;
+            document.querySelector('.sidebar').classList.remove('mobile-open');
+            document.getElementById('sidebarBackdrop').classList.remove('active');
+        }
+
+        function setupMobileNavigation() {
+            const toggle = document.getElementById('sidebarToggle');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            const sidebar = document.querySelector('.sidebar');
+            if (!toggle || !backdrop || !sidebar) return;
+
+            toggle.addEventListener('click', () => {
+                sidebar.classList.toggle('mobile-open');
+                backdrop.classList.toggle('active');
+            });
+            backdrop.addEventListener('click', () => {
+                sidebar.classList.remove('mobile-open');
+                backdrop.classList.remove('active');
+            });
         }
 
         function renderContent() {
@@ -1155,19 +1178,27 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 e.target.classList.add('active');
                 document.getElementById(`${tabName}-tab`).classList.add('active');
                 if (tabName === 'dashboard') renderDashboard();
+                closeMobileSidebar();
             });
         });
 
         // Dark Mode
+        function setDarkModeBtn(isDark) {
+            document.getElementById('themeToggle').innerHTML = isDark
+                ? '☀️ <span class="btn-text">Light Mode</span>'
+                : '🌙 <span class="btn-text">Dark Mode</span>';
+        }
+
         document.getElementById('themeToggle').addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-            document.getElementById('themeToggle').textContent = document.body.classList.contains('dark-mode') ? '☀️ Light Mode' : '🌙 Dark Mode';
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            setDarkModeBtn(isDark);
         });
 
         if (localStorage.getItem('darkMode') === 'true') {
             document.body.classList.add('dark-mode');
-            document.getElementById('themeToggle').textContent = '☀️ Light Mode';
+            setDarkModeBtn(true);
         }
 
         // Clear all
@@ -1242,3 +1273,4 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
         renderContent();
         setupImportExportUI();
         setupPaperAnalysisUI();
+        setupMobileNavigation();

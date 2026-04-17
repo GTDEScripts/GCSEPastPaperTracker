@@ -1102,33 +1102,311 @@
             border-radius: 4px;
         }
 
+        /* === MISSING BTN VARIANTS === */
+        .btn-info {
+            background: var(--accent);
+        }
+        .btn-info:hover {
+            background: var(--accent-dark);
+        }
+
+        /* === HAMBURGER BUTTON (hidden on desktop) === */
+        .hamburger-btn {
+            display: none;
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            line-height: 1;
+            transition: all 0.3s ease;
+        }
+        .hamburger-btn:hover {
+            background: rgba(255,255,255,0.28);
+        }
+
+        /* === SIDEBAR BACKDROP (mobile drawer overlay) === */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 490;
+            backdrop-filter: blur(2px);
+        }
+        .sidebar-backdrop.active {
+            display: block;
+        }
+
+        /* ===========================
+           MOBILE  (≤ 768 px)
+           =========================== */
         @media (max-width: 768px) {
+
+            /* Body & container — allow natural page scroll */
+            body {
+                overflow: auto;
+                height: auto;
+                min-height: 100vh;
+            }
+            .container {
+                height: auto;
+                min-height: 100vh;
+                overflow: visible;
+            }
+
+            /* --- Header --- */
+            .header {
+                padding: 12px 16px;
+                flex-direction: row;
+                gap: 10px;
+                align-items: center;
+            }
+            .header-left h1 {
+                font-size: 1.25em;
+                margin-bottom: 2px;
+            }
+            .header-left p {
+                display: none;
+            }
+            .header-controls {
+                gap: 8px;
+                flex-wrap: nowrap;
+            }
+            .theme-toggle, .theme-editor-btn {
+                padding: 7px 10px;
+                font-size: 0.8em;
+            }
+            .hamburger-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* --- Main layout --- */
             .main-content {
                 flex-direction: column;
+                overflow: visible;
+                flex: none;
             }
 
+            /* --- Sidebar: slide-in drawer --- */
             .sidebar {
-                width: 100%;
+                position: fixed;
+                top: 0;
+                left: -300px;
+                width: 280px;
+                height: 100%;
+                z-index: 500;
+                border-right: 2px solid var(--border-color);
+                border-bottom: none;
+                padding: 20px;
+                overflow-y: auto;
                 max-height: none;
-                border-right: none;
-                border-bottom: 2px solid var(--border-color);
+                transition: left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+            }
+            .sidebar.mobile-open {
+                left: 0;
             }
 
-            .paper {
-                grid-template-columns: 1fr;
+            /* --- Content area --- */
+            .content {
+                padding: 16px;
+                overflow: visible;
+                height: auto;
             }
 
+            /* --- Subject title --- */
+            .subject-title {
+                font-size: 1.7em;
+                margin-bottom: 18px;
+            }
+
+            /* --- Progress section --- */
+            .progress-section {
+                padding: 14px;
+                margin-bottom: 18px;
+            }
             .progress-grid {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                margin-bottom: 12px;
+            }
+            .progress-item h4 {
+                font-size: 0.78em;
+                margin-bottom: 4px;
+            }
+            .progress-item p {
+                font-size: 1.35em;
             }
 
+            /* --- Button group --- */
+            .button-group {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .btn {
+                padding: 9px 14px;
+                font-size: 0.85em;
+            }
+
+            /* --- Sessions list --- */
+            .sessions-grid {
+                gap: 14px;
+            }
+            .session {
+                padding: 14px;
+            }
+            .session-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                margin-bottom: 14px;
+            }
+            .session-title {
+                font-size: 1.05em;
+            }
+            .session-total {
+                font-size: 0.82em;
+                padding: 5px 10px;
+            }
+
+            /* --- Paper rows: single column stack --- */
+            .paper {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                padding: 14px;
+            }
+            .paper-label {
+                min-width: auto;
+                font-size: 1em;
+            }
+            .paper-input {
+                gap: 8px;
+            }
+            .paper-input input {
+                width: 72px;
+                padding: 10px 8px;
+                font-size: 1.05em;
+            }
+            .percentage {
+                display: inline-block;
+                min-width: 60px;
+            }
+
+            /* --- Emoji rating: bigger touch targets --- */
+            .emoji-rating {
+                justify-content: flex-start;
+                gap: 10px;
+            }
+            .emoji-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 1.4em;
+            }
+
+            /* --- Note button --- */
+            .note-btn {
+                padding: 8px 14px;
+            }
+
+            /* --- Modals: slide up from bottom --- */
+            .modal {
+                align-items: flex-end;
+            }
+            .modal-content {
+                width: 100%;
+                max-width: 100%;
+                border-radius: 20px 20px 0 0;
+                max-height: 90vh;
+                padding: 20px 16px;
+            }
+            .theme-editor-modal {
+                align-items: flex-end;
+            }
+            .theme-editor-content {
+                max-width: 100%;
+                width: 100%;
+                border-radius: 20px 20px 0 0;
+                padding: 20px 16px;
+            }
+
+            /* --- Dashboard --- */
             .dashboard-grid {
                 grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .chart-container {
+                height: 260px;
+                padding: 15px;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .stat-card {
+                padding: 16px;
+            }
+            .stat-card .big-number {
+                font-size: 2em;
             }
 
-            .header {
-                flex-direction: column;
-                gap: 15px;
+            /* --- Heatmap --- */
+            .heatmap-container {
+                padding: 12px;
+            }
+            .heatmap-table {
+                font-size: 0.78em;
+            }
+            .heatmap-table th, .heatmap-table td {
+                padding: 8px 5px;
+            }
+
+            /* --- Subject trends grid --- */
+            #subjectTrendsContainer {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 12px;
+            }
+
+            /* --- Grade calculator grid --- */
+            #gradeGridContainer {
+                grid-template-columns: repeat(4, 1fr) !important;
+            }
+
+            /* --- Papers grid view --- */
+            .papers-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        /* ===========================
+           SMALL PHONES  (≤ 480 px)
+           =========================== */
+        @media (max-width: 480px) {
+            .header-left h1 {
+                font-size: 1.05em;
+            }
+            /* Icon-only header buttons */
+            .btn-text {
+                display: none;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            #subjectTrendsContainer {
+                grid-template-columns: 1fr !important;
+            }
+            .note-btn span {
+                display: none;
+            }
+            .stat-card .big-number {
+                font-size: 1.8em;
+            }
+            #paperAnalysisStats {
+                grid-template-columns: 1fr !important;
             }
         }
 

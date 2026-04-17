@@ -6,7 +6,7 @@
     <title>GCSE Past Paper Tracker</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-        <link rel="stylesheet" href="css/styles.css?v=20260412">
+        <link rel="stylesheet" href="css/styles.css?v=20260417">
 </head>
 <body>
     <div class="container">
@@ -16,13 +16,15 @@
                 <p>Track progress, scores & trends</p>
             </div>
             <div class="header-controls">
-                <button class="theme-editor-btn" id="importExportBtn">📥 Data</button>
-                <button class="theme-editor-btn" id="themeEditorBtn">🎨 Theme</button>
-                <button class="theme-toggle" id="themeToggle">🌙 Dark Mode</button>
+                <button class="hamburger-btn" id="sidebarToggle" aria-label="Open subjects menu">☰</button>
+                <button class="theme-editor-btn" id="importExportBtn">📥 <span class="btn-text">Data</span></button>
+                <button class="theme-editor-btn" id="themeEditorBtn">🎨 <span class="btn-text">Theme</span></button>
+                <button class="theme-toggle" id="themeToggle">🌙 <span class="btn-text">Dark Mode</span></button>
             </div>
         </div>
 
         <div class="main-content">
+            <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
             <div class="sidebar">
                 <h3>Navigation</h3>
                 <div class="tab-buttons">
