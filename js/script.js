@@ -511,13 +511,26 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
         }
 
         // Calculate grade for a session (Mathematics only)
-        function calculateSessionGrade(totalScore, maxScore) {
+        function calculateSessionGrade(totalScore, maxScore, year, period) {
             if (currentSubject !== 'Mathematics' || totalScore === null || totalScore === '' || maxScore === 0) {
                 return null;
             }
 
-            // Get the most recent exam series boundaries
-            const boundaries = edexcelMathBoundaries['June 2025'];
+            // Map period to boundaries key format
+            let boundariesKey = '';
+            if (year && period) {
+                const periodMap = {
+                    'June/May': 'June',
+                    'October/November': 'November',
+                    'Lockdown': 'November'
+                };
+                const mappedPeriod = periodMap[period] || period;
+                boundariesKey = `${mappedPeriod} ${year}`;
+            }
+
+            const boundaries = boundariesKey && edexcelMathBoundaries[boundariesKey]
+                ? edexcelMathBoundaries[boundariesKey]
+                : edexcelMathBoundaries['June 2025'];
 
             if (boundaries[9] === 0) return null; // No boundaries available
 
@@ -757,7 +770,7 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             // Update grade display for Mathematics
             const gradeDiv = document.getElementById(`grade_${year}_${period}`);
             if (gradeDiv && currentSubject === 'Mathematics') {
-                const grade = calculateSessionGrade(totalScore, totalMax);
+                const grade = calculateSessionGrade(totalScore, totalMax, year, period);
                 if (grade) {
                     const gradeColors = { 9: '#10b981', 8: '#0891b2', 7: '#3b82f6', 6: '#f59e0b', 5: '#f97316', 4: '#ef4444', 3: '#dc2626', U: '#6b7280' };
                     gradeDiv.textContent = `Grade: ${grade}`;
