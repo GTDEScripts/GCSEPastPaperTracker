@@ -74,7 +74,8 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 { year: '2017', period: 'June/May' }, { year: '2018', period: 'June/May' },
                 { year: '2019', period: 'June/May' }, { year: '2020', period: 'Lockdown' },
                 { year: '2021', period: 'June/May' }, { year: '2022', period: 'June/May' },
-                { year: '2023', period: 'June/May' }, { year: '2024', period: 'June/May' }
+                { year: '2023', period: 'June/May' }, { year: '2024', period: 'June/May' },
+                { year: '2025', period: 'June/May' }
             ]
         };
 
@@ -95,6 +96,14 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             'Geography': [88, 88, 76],
             'Computer Science': [80, 80],
             'Business': [80, 80]
+        };
+
+        // AQA GCSE Business Grade Boundaries (out of 160)
+        const aqaBusinessBoundaries = {
+            'June 2022': { 9: 111, 8: 100, 7: 90, 6: 78, 5: 66, 4: 55, 3: 41, 2: 28, 1: 15, U: 0 },
+            'June 2023': { 9: 122, 8: 112, 7: 103, 6: 90, 5: 78, 4: 66, 3: 49, 2: 32, 1: 15, U: 0 },
+            'June 2024': { 9: 116, 8: 106, 7: 96, 6: 84, 5: 72, 4: 60, 3: 44, 2: 29, 1: 14, U: 0 },
+            'June 2025': { 9: 120, 8: 109, 7: 99, 6: 87, 5: 75, 4: 63, 3: 47, 2: 32, 1: 17, U: 0 }
         };
 
         // AQA GCSE Sciences Grade Boundaries - Higher Tier only (out of 200)
@@ -478,8 +487,27 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
         }
 
         function initGradeCalculator() {
+            const isBusiness = currentSubject === 'Business';
             const isScience = aqaScienceSubjects.includes(currentSubject);
-            const boundarySource = isScience ? aqaScienceBoundaries[currentSubject] : edexcelMathBoundaries;
+            const isMath = currentSubject === 'Mathematics';
+
+            let boundarySource;
+            let maxMarks;
+            let subtitle;
+
+            if (isBusiness) {
+                boundarySource = aqaBusinessBoundaries;
+                maxMarks = 160;
+                subtitle = 'Grade boundaries are based on the most recent AQA exam series (June 2025)';
+            } else if (isScience) {
+                boundarySource = aqaScienceBoundaries[currentSubject];
+                maxMarks = 200;
+                subtitle = 'Grade boundaries are based on the most recent AQA exam series (June 2025) — Higher Tier';
+            } else {
+                boundarySource = edexcelMathBoundaries;
+                maxMarks = 240;
+                subtitle = 'Grade boundaries are based on the most recent EDEXCEL exam series (June 2025)';
+            }
 
             const seriesSelect = document.getElementById('examSeriesSelect');
             seriesSelect.innerHTML = '';
@@ -490,14 +518,9 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 seriesSelect.appendChild(option);
             });
 
-            document.getElementById('gradeCalcModalTitle').textContent = isScience
-                ? `📊 AQA GCSE ${currentSubject} Grade Calculator`
-                : '📊 EDEXCEL GCSE Mathematics Grade Calculator';
-            document.getElementById('gradeCalcSubtitle').textContent = isScience
-                ? `Grade boundaries are based on the most recent AQA exam series (June 2025) — Higher Tier`
-                : 'Grade boundaries are based on the most recent EDEXCEL exam series (June 2025)';
-
-            const maxMarks = isScience ? 200 : 240;
+            const titleText = isMath ? '📊 EDEXCEL GCSE Mathematics Grade Calculator' : `📊 AQA GCSE ${currentSubject} Grade Calculator`;
+            document.getElementById('gradeCalcModalTitle').textContent = titleText;
+            document.getElementById('gradeCalcSubtitle').textContent = subtitle;
             document.getElementById('scoreInput').max = maxMarks;
             document.getElementById('scoreInput').value = '';
 
@@ -508,9 +531,23 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
         }
 
         function updateGradeCalculator() {
+            const isBusiness = currentSubject === 'Business';
             const isScience = aqaScienceSubjects.includes(currentSubject);
-            const maxMarks = isScience ? 200 : 240;
-            const boundarySource = isScience ? aqaScienceBoundaries[currentSubject] : edexcelMathBoundaries;
+            const isMath = currentSubject === 'Mathematics';
+
+            let maxMarks;
+            let boundarySource;
+
+            if (isBusiness) {
+                maxMarks = 160;
+                boundarySource = aqaBusinessBoundaries;
+            } else if (isScience) {
+                maxMarks = 200;
+                boundarySource = aqaScienceBoundaries[currentSubject];
+            } else {
+                maxMarks = 240;
+                boundarySource = edexcelMathBoundaries;
+            }
 
             const series = document.getElementById('examSeriesSelect').value;
             const score = parseInt(document.getElementById('scoreInput').value) || 0;
@@ -526,8 +563,10 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             else if (score >= boundaries[5]) grade = '5';
             else if (score >= boundaries[4]) grade = '4';
             else if (score >= boundaries[3]) grade = '3';
+            else if (isBusiness && score >= boundaries[2]) grade = '2';
+            else if (isBusiness && score >= boundaries[1]) grade = '1';
 
-            const gradeColors = { 9: '#10b981', 8: '#0891b2', 7: '#3b82f6', 6: '#f59e0b', 5: '#f97316', 4: '#ef4444', 3: '#dc2626', U: '#6b7280' };
+            const gradeColors = { 9: '#10b981', 8: '#0891b2', 7: '#3b82f6', 6: '#f59e0b', 5: '#f97316', 4: '#ef4444', 3: '#dc2626', 2: '#b91c1c', 1: '#7f1d1d', U: '#6b7280' };
             const percentage = ((score / maxMarks) * 100).toFixed(1);
 
             const gradeResult = document.getElementById('gradeResult');
@@ -538,7 +577,7 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             // Display grade grid
             const gridContainer = document.getElementById('gradeGridContainer');
             gridContainer.innerHTML = '';
-            const grades = ['9', '8', '7', '6', '5', '4', '3', 'U'];
+            const grades = isBusiness ? ['9', '8', '7', '6', '5', '4', '3', '2', '1', 'U'] : ['9', '8', '7', '6', '5', '4', '3', 'U'];
             grades.forEach(g => {
                 const cell = document.createElement('div');
                 cell.style.cssText = `
@@ -566,10 +605,10 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             document.getElementById('boundariesLabel').textContent = `Grade Boundaries (Max: ${maxMarks}):`;
         }
 
-        // Calculate grade for a session (Mathematics and AQA Sciences)
+        // Calculate grade for a session (Mathematics, AQA Sciences, and Business)
         function calculateSessionGrade(totalScore, maxScore, year, period) {
-            const isScience = aqaScienceSubjects.includes(currentSubject);
-            if (!isScience && currentSubject !== 'Mathematics') return null;
+            const hasAqaGrades = aqaSubjectsWithGrades.includes(currentSubject);
+            if (!hasAqaGrades && currentSubject !== 'Mathematics') return null;
             if (totalScore === null || totalScore === '' || maxScore === 0) return null;
 
             const periodMap = {
@@ -581,7 +620,11 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             const boundariesKey = year && period ? `${mappedPeriod} ${year}` : '';
 
             let boundaries;
-            if (isScience) {
+            if (currentSubject === 'Business') {
+                boundaries = boundariesKey && aqaBusinessBoundaries[boundariesKey]
+                    ? aqaBusinessBoundaries[boundariesKey]
+                    : null;
+            } else if (aqaScienceSubjects.includes(currentSubject)) {
                 boundaries = boundariesKey && aqaScienceBoundaries[currentSubject]?.[boundariesKey]
                     ? aqaScienceBoundaries[currentSubject][boundariesKey]
                     : null;
@@ -601,6 +644,8 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             else if (totalScore >= boundaries[5]) grade = '5';
             else if (totalScore >= boundaries[4]) grade = '4';
             else if (totalScore >= boundaries[3]) grade = '3';
+            else if (totalScore >= boundaries[2]) grade = '2';
+            else if (totalScore >= boundaries[1]) grade = '1';
 
             return grade;
         }
@@ -672,14 +717,16 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             });
         }
 
+        const aqaSubjectsWithGrades = ['Biology', 'Chemistry', 'Physics', 'Business'];
         const aqaScienceSubjects = ['Biology', 'Chemistry', 'Physics'];
 
         function renderContent() {
             const isMath = currentSubject === 'Mathematics';
+            const hasAqaGrades = aqaSubjectsWithGrades.includes(currentSubject);
             const isScience = aqaScienceSubjects.includes(currentSubject);
-            const titleText = isMath ? 'EDEXCEL GCSE Mathematics' : isScience ? `AQA GCSE ${currentSubject}` : currentSubject;
+            const titleText = isMath ? 'EDEXCEL GCSE Mathematics' : hasAqaGrades ? `AQA GCSE ${currentSubject}` : currentSubject;
             document.getElementById('subjectTitle').textContent = titleText;
-            document.getElementById('gradeCalcBtn').style.display = (isMath || isScience) ? 'inline-block' : 'none';
+            document.getElementById('gradeCalcBtn').style.display = (isMath || hasAqaGrades) ? 'inline-block' : 'none';
             const container = document.getElementById('sessionsContainer');
             container.innerHTML = '';
 
@@ -853,9 +900,9 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 totalDiv.textContent = `0 / ${maxPossible}`;
             }
 
-            // Update grade display for Mathematics and AQA Sciences
+            // Update grade display for Mathematics and AQA subjects
             const gradeDiv = document.getElementById(`grade_${year}_${period}`);
-            if (gradeDiv && (currentSubject === 'Mathematics' || aqaScienceSubjects.includes(currentSubject))) {
+            if (gradeDiv && (currentSubject === 'Mathematics' || aqaSubjectsWithGrades.includes(currentSubject))) {
                 const grade = calculateSessionGrade(totalScore, totalMax, year, period);
                 if (grade) {
                     const gradeColors = { 9: '#10b981', 8: '#0891b2', 7: '#3b82f6', 6: '#f59e0b', 5: '#f97316', 4: '#ef4444', 3: '#dc2626', U: '#6b7280' };
