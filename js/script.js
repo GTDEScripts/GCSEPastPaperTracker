@@ -32,22 +32,25 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 { year: '2024', period: 'June/May' }
             ],
             'Biology': [
-                { year: '2017', period: 'June/May' }, { year: '2018', period: 'June/May' },
-                { year: '2019', period: 'June/May' }, { year: '2020', period: 'Lockdown' },
-                { year: '2021', period: 'June/May' }, { year: '2022', period: 'June/May' },
-                { year: '2023', period: 'June/May' }, { year: '2024', period: 'June/May' }
+                { year: '2018', period: 'June/May' },
+                { year: '2019', period: 'June/May' }, { year: '2020', period: 'October/November' },
+                { year: '2021', period: 'October/November' }, { year: '2022', period: 'June/May' },
+                { year: '2023', period: 'June/May' }, { year: '2024', period: 'June/May' },
+                { year: '2025', period: 'June/May' }
             ],
             'Chemistry': [
-                { year: '2017', period: 'June/May' }, { year: '2018', period: 'June/May' },
-                { year: '2019', period: 'June/May' }, { year: '2020', period: 'Lockdown' },
-                { year: '2021', period: 'June/May' }, { year: '2022', period: 'June/May' },
-                { year: '2023', period: 'June/May' }, { year: '2024', period: 'June/May' }
+                { year: '2018', period: 'June/May' },
+                { year: '2019', period: 'June/May' }, { year: '2020', period: 'October/November' },
+                { year: '2021', period: 'October/November' }, { year: '2022', period: 'June/May' },
+                { year: '2023', period: 'June/May' }, { year: '2024', period: 'June/May' },
+                { year: '2025', period: 'June/May' }
             ],
             'Physics': [
-                { year: '2017', period: 'June/May' }, { year: '2018', period: 'June/May' },
-                { year: '2019', period: 'June/May' }, { year: '2020', period: 'Lockdown' },
-                { year: '2021', period: 'June/May' }, { year: '2022', period: 'June/May' },
-                { year: '2023', period: 'June/May' }, { year: '2024', period: 'June/May' }
+                { year: '2018', period: 'June/May' },
+                { year: '2019', period: 'June/May' }, { year: '2020', period: 'October/November' },
+                { year: '2021', period: 'October/November' }, { year: '2022', period: 'June/May' },
+                { year: '2023', period: 'June/May' }, { year: '2024', period: 'June/May' },
+                { year: '2025', period: 'June/May' }
             ],
             'History': [
                 { year: '2017', period: 'June/May' }, { year: '2018', period: 'June/May' },
@@ -92,6 +95,40 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             'Geography': [88, 88, 76],
             'Computer Science': [80, 80],
             'Business': [80, 80]
+        };
+
+        // AQA GCSE Sciences Grade Boundaries - Higher Tier only (out of 200)
+        const aqaScienceBoundaries = {
+            'Biology': {
+                'June 2018': { 9: 132, 8: 117, 7: 102, 6: 85, 5: 69, 4: 53, 3: 37, U: 0 },
+                'June 2019': { 9: 134, 8: 120, 7: 107, 6: 89, 5: 72, 4: 55, 3: 46, U: 0 },
+                'November 2020': { 9: 131, 8: 116, 7: 101, 6: 82, 5: 63, 4: 45, 3: 36, U: 0 },
+                'November 2021': { 9: 130, 8: 114, 7: 98, 6: 81, 5: 64, 4: 48, 3: 40, U: 0 },
+                'June 2022': { 9: 132, 8: 118, 7: 104, 6: 86, 5: 68, 4: 51, 3: 42, U: 0 },
+                'June 2023': { 9: 132, 8: 118, 7: 104, 6: 86, 5: 69, 4: 52, 3: 43, U: 0 },
+                'June 2024': { 9: 141, 8: 126, 7: 112, 6: 90, 5: 69, 4: 48, 3: 37, U: 0 },
+                'June 2025': { 9: 141, 8: 127, 7: 113, 6: 94, 5: 75, 4: 56, 3: 46, U: 0 }
+            },
+            'Chemistry': {
+                'June 2018': { 9: 150, 8: 131, 7: 112, 6: 92, 5: 72, 4: 52, 3: 32, U: 0 },
+                'June 2019': { 9: 144, 8: 125, 7: 107, 6: 88, 5: 69, 4: 50, 3: 40, U: 0 },
+                'November 2020': { 9: 139, 8: 118, 7: 98, 6: 78, 5: 58, 4: 38, 3: 28, U: 0 },
+                'November 2021': { 9: 138, 8: 117, 7: 96, 6: 77, 5: 58, 4: 39, 3: 29, U: 0 },
+                'June 2022': { 9: 144, 8: 123, 7: 103, 6: 80, 5: 58, 4: 36, 3: 25, U: 0 },
+                'June 2023': { 9: 149, 8: 131, 7: 113, 6: 91, 5: 69, 4: 48, 3: 37, U: 0 },
+                'June 2024': { 9: 149, 8: 130, 7: 112, 6: 90, 5: 68, 4: 46, 3: 35, U: 0 },
+                'June 2025': { 9: 150, 8: 132, 7: 115, 6: 90, 5: 66, 4: 42, 3: 30, U: 0 }
+            },
+            'Physics': {
+                'June 2018': { 9: 135, 8: 119, 7: 103, 6: 85, 5: 68, 4: 51, 3: 34, U: 0 },
+                'June 2019': { 9: 143, 8: 125, 7: 108, 6: 89, 5: 70, 4: 51, 3: 41, U: 0 },
+                'November 2020': { 9: 140, 8: 120, 7: 101, 6: 80, 5: 60, 4: 40, 3: 30, U: 0 },
+                'November 2021': { 9: 142, 8: 122, 7: 102, 6: 82, 5: 62, 4: 43, 3: 33, U: 0 },
+                'June 2022': { 9: 150, 8: 134, 7: 119, 6: 98, 5: 77, 4: 56, 3: 45, U: 0 },
+                'June 2023': { 9: 147, 8: 133, 7: 120, 6: 102, 5: 84, 4: 67, 3: 58, U: 0 },
+                'June 2024': { 9: 151, 8: 136, 7: 122, 6: 103, 5: 85, 4: 67, 3: 58, U: 0 },
+                'June 2025': { 9: 152, 8: 139, 7: 126, 6: 107, 5: 88, 4: 70, 3: 61, U: 0 }
+            }
         };
 
         // EDEXCEL GCSE Mathematics Grade Boundaries (out of 240)
@@ -441,14 +478,28 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
         }
 
         function initGradeCalculator() {
+            const isScience = aqaScienceSubjects.includes(currentSubject);
+            const boundarySource = isScience ? aqaScienceBoundaries[currentSubject] : edexcelMathBoundaries;
+
             const seriesSelect = document.getElementById('examSeriesSelect');
             seriesSelect.innerHTML = '';
-            Object.keys(edexcelMathBoundaries).reverse().forEach(series => {
+            Object.keys(boundarySource).reverse().forEach(series => {
                 const option = document.createElement('option');
                 option.value = series;
                 option.textContent = series;
                 seriesSelect.appendChild(option);
             });
+
+            document.getElementById('gradeCalcModalTitle').textContent = isScience
+                ? `📊 AQA GCSE ${currentSubject} Grade Calculator`
+                : '📊 EDEXCEL GCSE Mathematics Grade Calculator';
+            document.getElementById('gradeCalcSubtitle').textContent = isScience
+                ? `Grade boundaries are based on the most recent AQA exam series (June 2025) — Higher Tier`
+                : 'Grade boundaries are based on the most recent EDEXCEL exam series (June 2025)';
+
+            const maxMarks = isScience ? 200 : 240;
+            document.getElementById('scoreInput').max = maxMarks;
+            document.getElementById('scoreInput').value = '';
 
             updateGradeCalculator();
 
@@ -457,9 +508,14 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
         }
 
         function updateGradeCalculator() {
+            const isScience = aqaScienceSubjects.includes(currentSubject);
+            const maxMarks = isScience ? 200 : 240;
+            const boundarySource = isScience ? aqaScienceBoundaries[currentSubject] : edexcelMathBoundaries;
+
             const series = document.getElementById('examSeriesSelect').value;
             const score = parseInt(document.getElementById('scoreInput').value) || 0;
-            const boundaries = edexcelMathBoundaries[series];
+            const boundaries = boundarySource[series];
+            if (!boundaries) return;
 
             // Calculate grade
             let grade = 'U';
@@ -471,15 +527,13 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             else if (score >= boundaries[4]) grade = '4';
             else if (score >= boundaries[3]) grade = '3';
 
-            // Get grade color
             const gradeColors = { 9: '#10b981', 8: '#0891b2', 7: '#3b82f6', 6: '#f59e0b', 5: '#f97316', 4: '#ef4444', 3: '#dc2626', U: '#6b7280' };
-            const percentage = ((score / 240) * 100).toFixed(1);
+            const percentage = ((score / maxMarks) * 100).toFixed(1);
 
-            // Update display
             const gradeResult = document.getElementById('gradeResult');
             gradeResult.textContent = grade;
             gradeResult.style.color = gradeColors[grade];
-            document.getElementById('gradePercentage').textContent = `${score}/240 (${percentage}%)`;
+            document.getElementById('gradePercentage').textContent = `${score}/${maxMarks} (${percentage}%)`;
 
             // Display grade grid
             const gridContainer = document.getElementById('gradeGridContainer');
@@ -508,31 +562,36 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 div.innerHTML = `<span style="color: ${isMet ? gradeColors[g] : 'var(--text-secondary)'}">${isMet ? '✓' : '○'} Grade ${g}: ${boundaries[g]}</span>`;
                 boundariesDisplay.appendChild(div);
             });
+
+            document.getElementById('boundariesLabel').textContent = `Grade Boundaries (Max: ${maxMarks}):`;
         }
 
-        // Calculate grade for a session (Mathematics only)
+        // Calculate grade for a session (Mathematics and AQA Sciences)
         function calculateSessionGrade(totalScore, maxScore, year, period) {
-            if (currentSubject !== 'Mathematics' || totalScore === null || totalScore === '' || maxScore === 0) {
-                return null;
+            const isScience = aqaScienceSubjects.includes(currentSubject);
+            if (!isScience && currentSubject !== 'Mathematics') return null;
+            if (totalScore === null || totalScore === '' || maxScore === 0) return null;
+
+            const periodMap = {
+                'June/May': 'June',
+                'October/November': 'November',
+                'Lockdown': 'November'
+            };
+            const mappedPeriod = periodMap[period] || period;
+            const boundariesKey = year && period ? `${mappedPeriod} ${year}` : '';
+
+            let boundaries;
+            if (isScience) {
+                boundaries = boundariesKey && aqaScienceBoundaries[currentSubject]?.[boundariesKey]
+                    ? aqaScienceBoundaries[currentSubject][boundariesKey]
+                    : null;
+            } else {
+                boundaries = (boundariesKey && edexcelMathBoundaries[boundariesKey])
+                    ? edexcelMathBoundaries[boundariesKey]
+                    : edexcelMathBoundaries['June 2025'];
             }
 
-            // Map period to boundaries key format
-            let boundariesKey = '';
-            if (year && period) {
-                const periodMap = {
-                    'June/May': 'June',
-                    'October/November': 'November',
-                    'Lockdown': 'November'
-                };
-                const mappedPeriod = periodMap[period] || period;
-                boundariesKey = `${mappedPeriod} ${year}`;
-            }
-
-            const boundaries = boundariesKey && edexcelMathBoundaries[boundariesKey]
-                ? edexcelMathBoundaries[boundariesKey]
-                : edexcelMathBoundaries['June 2025'];
-
-            if (boundaries[9] === 0) return null; // No boundaries available
+            if (!boundaries) return null;
 
             let grade = 'U';
             if (totalScore >= boundaries[9]) grade = '9';
@@ -613,10 +672,14 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
             });
         }
 
+        const aqaScienceSubjects = ['Biology', 'Chemistry', 'Physics'];
+
         function renderContent() {
-            const titleText = currentSubject === 'Mathematics' ? 'EDEXCEL GCSE Mathematics' : currentSubject;
+            const isMath = currentSubject === 'Mathematics';
+            const isScience = aqaScienceSubjects.includes(currentSubject);
+            const titleText = isMath ? 'EDEXCEL GCSE Mathematics' : isScience ? `AQA GCSE ${currentSubject}` : currentSubject;
             document.getElementById('subjectTitle').textContent = titleText;
-            document.getElementById('gradeCalcBtn').style.display = currentSubject === 'Mathematics' ? 'inline-block' : 'none';
+            document.getElementById('gradeCalcBtn').style.display = (isMath || isScience) ? 'inline-block' : 'none';
             const container = document.getElementById('sessionsContainer');
             container.innerHTML = '';
 
@@ -790,9 +853,9 @@ const subjects = ['Mathematics', 'English Language', 'English Literature', 'Biol
                 totalDiv.textContent = `0 / ${maxPossible}`;
             }
 
-            // Update grade display for Mathematics
+            // Update grade display for Mathematics and AQA Sciences
             const gradeDiv = document.getElementById(`grade_${year}_${period}`);
-            if (gradeDiv && currentSubject === 'Mathematics') {
+            if (gradeDiv && (currentSubject === 'Mathematics' || aqaScienceSubjects.includes(currentSubject))) {
                 const grade = calculateSessionGrade(totalScore, totalMax, year, period);
                 if (grade) {
                     const gradeColors = { 9: '#10b981', 8: '#0891b2', 7: '#3b82f6', 6: '#f59e0b', 5: '#f97316', 4: '#ef4444', 3: '#dc2626', U: '#6b7280' };

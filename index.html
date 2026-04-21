@@ -225,12 +225,12 @@
     <div class="modal" id="gradeCalculatorModal">
         <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
-                <h2>📊 EDEXCEL GCSE Mathematics Grade Calculator</h2>
+                <h2 id="gradeCalcModalTitle">📊 EDEXCEL GCSE Mathematics Grade Calculator</h2>
                 <button class="close-btn" onclick="closeGradeCalculatorModal()">&times;</button>
             </div>
 
             <div style="background: var(--bg-secondary); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                <p style="margin: 0; font-size: 0.9em; color: var(--text-secondary);">Grade boundaries are based on the most recent EDEXCEL exam series (June 2025)</p>
+                <p id="gradeCalcSubtitle" style="margin: 0; font-size: 0.9em; color: var(--text-secondary);">Grade boundaries are based on the most recent EDEXCEL exam series (June 2025)</p>
             </div>
 
             <div style="display: flex; gap: 15px; margin-bottom: 20px;">
@@ -256,7 +256,7 @@
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;" id="gradeGridContainer"></div>
 
             <div style="background: var(--bg-secondary); padding: 15px; border-radius: 8px; font-size: 0.85em; color: var(--text-secondary);">
-                <p style="margin: 0 0 10px 0;"><strong>Grade Boundaries (Max: 240):</strong></p>
+                <p style="margin: 0 0 10px 0;"><strong id="boundariesLabel">Grade Boundaries (Max: 240):</strong></p>
                 <div id="boundariesDisplay" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;"></div>
             </div>
         </div>
